@@ -16,6 +16,16 @@ The app uses an ad-hoc signature and is **not Apple-notarized**. macOS may block
 
 当前版本为本地 ad-hoc 签名，**尚未经过 Apple 公证**，首次打开可能被系统拦截；也可以自行从源码构建。
 
+## Screenshots / 界面预览
+
+**Pgy nodes / 蒲公英节点** — Select individual IPs to route through Pgy. 按节点选择需要走蒲公英的 IP，本机虚拟 IP 自动识别。
+
+![RouteBar Pgy node selection with online status and read-only local virtual IP](docs/screenshots/pgy-nodes.png)
+
+**Tailscale subnets / Tailscale 子网** — Choose remote subnets while keeping directly connected LANs first. 选择远端子网，与直连内网冲突的网段会显示「Local Network First」。
+
+![RouteBar Tailscale subnet selection with local network conflict protection](docs/screenshots/tailscale-subnets.png)
+
 ## Features / 功能
 
 - **Pgy node selection:** discovers local virtual IP, member names, IPs, and online status. Only checked IPs receive node routes; manual node entry and import are available.
