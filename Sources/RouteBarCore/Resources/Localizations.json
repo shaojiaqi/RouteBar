@@ -1,0 +1,1102 @@
+{
+  "操作失败，已回滚：{0}": {
+    "en": "Operation failed and was rolled back: {0}",
+    "zh-Hant": "操作失敗，已復原：{0}",
+    "zh-Hans": "操作失败，已回滚：{0}"
+  },
+  "操作失败：{0}；回滚未完成：{1}。请使用「回滚中断操作」。": {
+    "en": "Operation failed: {0}. Rollback is incomplete: {1}. Use “Roll Back Interrupted Operation”.",
+    "zh-Hant": "操作失敗：{0}；復原未完成：{1}。請使用「復原中斷操作」。",
+    "zh-Hans": "操作失败：{0}；回滚未完成：{1}。请使用「回滚中断操作」。"
+  },
+  "管理记录的所有者或权限异常，拒绝使用。": {
+    "en": "The recovery record has an unexpected owner or permissions. It cannot be used.",
+    "zh-Hant": "復原記錄的擁有者或權限異常，無法使用。",
+    "zh-Hans": "管理记录的所有者或权限异常，拒绝使用。"
+  },
+  "保存执行记录需要管理员授权": {
+    "en": "Administrator authorization is required to save the operation record.",
+    "zh-Hant": "儲存執行記錄需要管理員授權",
+    "zh-Hans": "保存执行记录需要管理员授权"
+  },
+  "执行记录目录不安全": {
+    "en": "The operation record directory is not secure.",
+    "zh-Hant": "執行記錄目錄不安全",
+    "zh-Hans": "执行记录目录不安全"
+  },
+  "执行切换必须由系统管理员授权": {
+    "en": "Administrator authorization is required to change routes.",
+    "zh-Hant": "變更路由必須由系統管理員授權",
+    "zh-Hans": "执行切换必须由系统管理员授权"
+  },
+  "无效用户": {
+    "en": "Invalid user.",
+    "zh-Hant": "無效的使用者",
+    "zh-Hans": "无效用户"
+  },
+  "无法创建执行锁": {
+    "en": "Unable to create the operation lock.",
+    "zh-Hant": "無法建立執行鎖定",
+    "zh-Hans": "无法创建执行锁"
+  },
+  "另一个路由操作正在执行，请稍后再试。": {
+    "en": "Another route operation is running. Try again shortly.",
+    "zh-Hant": "另一個路由操作正在執行，請稍後再試。",
+    "zh-Hans": "另一个路由操作正在执行，请稍后再试。"
+  },
+  "已回滚中断的操作": {
+    "en": "The interrupted operation was rolled back.",
+    "zh-Hant": "已復原中斷的操作",
+    "zh-Hans": "已回滚中断的操作"
+  },
+  "上次操作中断，请先回滚未完成操作。": {
+    "en": "The previous operation was interrupted. Roll it back first.",
+    "zh-Hant": "上次操作已中斷，請先復原未完成的操作。",
+    "zh-Hans": "上次操作中断，请先回滚未完成操作。"
+  },
+  "网络状态已变化，未执行修改。请刷新并重新预览。": {
+    "en": "The network has changed. No changes were made. Refresh and review again.",
+    "zh-Hant": "網路狀態已變更，未執行修改。請重新整理並再次預覽。",
+    "zh-Hans": "网络状态已变化，未执行修改。请刷新并重新预览。"
+  },
+  "路由已符合所选模式": {
+    "en": "Routes already match the selected mode.",
+    "zh-Hant": "路由已符合所選模式",
+    "zh-Hans": "路由已符合所选模式"
+  },
+  "{0} · 已验证": {
+    "en": "{0} · Verified",
+    "zh-Hant": "{0} · 已驗證",
+    "zh-Hans": "{0} · 已验证"
+  },
+  "无法读取 Tailscale 子网设置": {
+    "en": "Unable to read Tailscale subnet settings.",
+    "zh-Hant": "無法讀取 Tailscale 子網路設定",
+    "zh-Hans": "无法读取 Tailscale 子网设置"
+  },
+  "Tailscale 接收设置已被外部修改": {
+    "en": "Tailscale route acceptance was changed by another app.",
+    "zh-Hant": "Tailscale 接收設定已被其他程式修改",
+    "zh-Hans": "Tailscale 接收设置已被外部修改"
+  },
+  "管理员模式只允许运行 root 所有且不可由普通用户写入的官方 Tailscale 程序。": {
+    "en": "Administrator mode only runs the official Tailscale executable owned by root and not writable by other users.",
+    "zh-Hant": "管理員模式僅允許執行由 root 擁有且一般使用者無法寫入的官方 Tailscale 程式。",
+    "zh-Hans": "管理员模式只允许运行 root 所有且不可由普通用户写入的官方 Tailscale 程序。"
+  },
+  "Tailscale 接收设置未生效": {
+    "en": "The Tailscale route acceptance change did not take effect.",
+    "zh-Hant": "Tailscale 接收設定未生效",
+    "zh-Hans": "Tailscale 接收设置未生效"
+  },
+  "拒绝修改非蒲公英原始网段": {
+    "en": "Refusing to change a route that is not an original Pgy subnet.",
+    "zh-Hant": "拒絕修改非蒲公英原始網段",
+    "zh-Hans": "拒绝修改非蒲公英原始网段"
+  },
+  "蒲公英接口已变化，拒绝恢复旧接口路由": {
+    "en": "The Pgy interface has changed. Old interface routes will not be restored.",
+    "zh-Hant": "蒲公英介面已變更，拒絕還原舊介面路由",
+    "zh-Hans": "蒲公英接口已变化，拒绝恢复旧接口路由"
+  },
+  "拒绝修改默认、回环或组播路由": {
+    "en": "Refusing to change a default, loopback, or multicast route.",
+    "zh-Hant": "拒絕修改預設、回送或多點傳送路由",
+    "zh-Hans": "拒绝修改默认、回环或组播路由"
+  },
+  "隧道接口身份已变化，拒绝操作：{0}": {
+    "en": "Tunnel interface identity changed. No action was taken: {0}",
+    "zh-Hant": "通道介面身分已變更，拒絕操作：{0}",
+    "zh-Hans": "隧道接口身份已变化，拒绝操作：{0}"
+  },
+  "路由被其他程序占用，未覆盖：{0}": {
+    "en": "Another app owns this route. It was not overwritten: {0}",
+    "zh-Hant": "路由已由其他程式使用，未覆寫：{0}",
+    "zh-Hans": "路由被其他程序占用，未覆盖：{0}"
+  },
+  "目标接口已消失：{0}": {
+    "en": "The target interface no longer exists: {0}",
+    "zh-Hant": "目標介面已消失：{0}",
+    "zh-Hans": "目标接口已消失：{0}"
+  },
+  "路由归属已变化，未删除：{0}": {
+    "en": "Route ownership changed. It was not removed: {0}",
+    "zh-Hant": "路由歸屬已變更，未刪除：{0}",
+    "zh-Hans": "路由归属已变化，未删除：{0}"
+  },
+  "路由写入后验证失败：{0}": {
+    "en": "Route verification failed after writing: {0}",
+    "zh-Hant": "寫入路由後驗證失敗：{0}",
+    "zh-Hans": "路由写入后验证失败：{0}"
+  },
+  "路由缺失：{0}": {
+    "en": "Missing route: {0}",
+    "zh-Hant": "缺少路由：{0}",
+    "zh-Hans": "路由缺失：{0}"
+  },
+  "其他程序添加了更具体路由：{0}": {
+    "en": "Another app added a more specific route: {0}",
+    "zh-Hant": "其他程式新增了更明確的路由：{0}",
+    "zh-Hans": "其他程序添加了更具体路由：{0}"
+  },
+  "实际查路由未走预期接口：{0}": {
+    "en": "The route lookup did not use the expected interface: {0}",
+    "zh-Hant": "實際路由查詢未使用預期的介面：{0}",
+    "zh-Hans": "实际查路由未走预期接口：{0}"
+  },
+  "蒲公英重新添加了大网段路由": {
+    "en": "Pgy added the broad subnet route again.",
+    "zh-Hant": "蒲公英重新新增了大網段路由",
+    "zh-Hans": "蒲公英重新添加了大网段路由"
+  },
+  "无效网络接口": {
+    "en": "Invalid network interface.",
+    "zh-Hant": "無效的網路介面",
+    "zh-Hans": "无效网络接口"
+  },
+  "无效网关": {
+    "en": "Invalid gateway.",
+    "zh-Hant": "無效的閘道",
+    "zh-Hans": "无效网关"
+  },
+  "无法解析 Tailscale 状态": {
+    "en": "Unable to parse Tailscale status.",
+    "zh-Hant": "無法解析 Tailscale 狀態",
+    "zh-Hans": "无法解析 Tailscale 状态"
+  },
+  "未知路由器": {
+    "en": "Unknown Router",
+    "zh-Hant": "未知的路由器",
+    "zh-Hans": "未知路由器"
+  },
+  "恢复 {0}": {
+    "en": "Restore {0}",
+    "zh-Hant": "還原 {0}",
+    "zh-Hans": "恢复 {0}"
+  },
+  "移除蒲公英网段 {0}": {
+    "en": "Remove Pgy subnet {0}",
+    "zh-Hant": "移除蒲公英網段 {0}",
+    "zh-Hans": "移除蒲公英网段 {0}"
+  },
+  "开": {
+    "en": "On",
+    "zh-Hant": "開",
+    "zh-Hans": "开"
+  },
+  "关": {
+    "en": "Off",
+    "zh-Hant": "關",
+    "zh-Hans": "关"
+  },
+  "Tailscale 接收子网：{0}（不改 DNS / 出口节点）": {
+    "en": "Tailscale subnet routes: {0} (DNS and exit node unchanged)",
+    "zh-Hant": "Tailscale 接收子網路：{0}（不變更 DNS／出口節點）",
+    "zh-Hans": "Tailscale 接收子网：{0}（不改 DNS / 出口节点）"
+  },
+  "蒲公英未连接，或虚拟 IP 未匹配。工具不会替你启动它。": {
+    "en": "Pgy is disconnected or its virtual IP does not match. RouteBar will not start it.",
+    "zh-Hant": "蒲公英未連線，或虛擬 IP 不符。RouteBar 不會自動啟動它。",
+    "zh-Hans": "蒲公英未连接，或虚拟 IP 未匹配。工具不会替你启动它。"
+  },
+  "节点 IP 无效：{0}": {
+    "en": "Invalid node IP: {0}",
+    "zh-Hant": "節點 IP 無效：{0}",
+    "zh-Hans": "节点 IP 无效：{0}"
+  },
+  "节点列表不能包含本机蒲公英 IP": {
+    "en": "The node list cannot include this Mac’s Pgy IP.",
+    "zh-Hant": "節點清單不可包含本機的蒲公英 IP",
+    "zh-Hans": "节点列表不能包含本机蒲公英 IP"
+  },
+  "{0} 属于当前直连内网，已阻止切换以保护办公室连接。": {
+    "en": "{0} belongs to the directly connected LAN. The change was blocked to protect office access.",
+    "zh-Hant": "{0} 屬於目前直連的區域網路，已阻止變更以保護辦公室連線。",
+    "zh-Hans": "{0} 属于当前直连内网，已阻止切换以保护办公室连接。"
+  },
+  "{0} 已由 Tailscale 使用，请先解决地址冲突。": {
+    "en": "{0} is already used by Tailscale. Resolve the address conflict first.",
+    "zh-Hant": "{0} 已由 Tailscale 使用，請先解決位址衝突。",
+    "zh-Hans": "{0} 已由 Tailscale 使用，请先解决地址冲突。"
+  },
+  "请至少添加并选择一个蒲公英节点。": {
+    "en": "Add and select at least one Pgy node.",
+    "zh-Hant": "請至少新增並選取一個蒲公英節點。",
+    "zh-Hans": "请至少添加并选择一个蒲公英节点。"
+  },
+  "检测到蒲公英默认路由，请先在官方客户端关闭全局代理模式。": {
+    "en": "A Pgy default route was detected. Turn off global proxy mode in the official client first.",
+    "zh-Hant": "偵測到蒲公英預設路由，請先在官方用戶端關閉全域代理模式。",
+    "zh-Hans": "检测到蒲公英默认路由，请先在官方客户端关闭全局代理模式。"
+  },
+  "仅管理 IPv4。节点选择需确认应用后才生效。": {
+    "en": "IPv4 only. Node selections take effect after you review and apply them.",
+    "zh-Hant": "僅管理 IPv4。節點選取須確認套用後才會生效。",
+    "zh-Hans": "仅管理 IPv4。节点选择需确认应用后才生效。"
+  },
+  "原始蒲公英路由位置已有其他路由，拒绝覆盖：{0}": {
+    "en": "Another route occupies the original Pgy route. It will not be overwritten: {0}",
+    "zh-Hant": "原始蒲公英路由已由其他路由占用，拒絕覆寫：{0}",
+    "zh-Hans": "原始蒲公英路由位置已有其他路由，拒绝覆盖：{0}"
+  },
+  "旧接口已消失，不恢复旧路由：{0}": {
+    "en": "The old interface no longer exists. This route will not be restored: {0}",
+    "zh-Hant": "舊介面已消失，不還原舊路由：{0}",
+    "zh-Hans": "旧接口已消失，不恢复旧路由：{0}"
+  },
+  "Tailscale 未就绪，或无法读取接收子网设置。": {
+    "en": "Tailscale is not ready, or subnet route acceptance cannot be read.",
+    "zh-Hant": "Tailscale 尚未就緒，或無法讀取接收子網路設定。",
+    "zh-Hans": "Tailscale 未就绪，或无法读取接收子网设置。"
+  },
+  "部分选择的子网已撤销，请刷新并重新选择。": {
+    "en": "Some selected subnets are no longer advertised. Refresh and select again.",
+    "zh-Hant": "部分選取的子網路已撤回，請重新整理並再次選取。",
+    "zh-Hans": "部分选择的子网已撤销，请刷新并重新选择。"
+  },
+  "发现 IPv6 子网；本版只支持 IPv4，不能安全开启混合子网选择。": {
+    "en": "IPv6 subnets were detected. This version supports IPv4 only and cannot safely enable a mixed selection.",
+    "zh-Hant": "偵測到 IPv6 子網路；此版本僅支援 IPv4，無法安全啟用混合選取。",
+    "zh-Hans": "发现 IPv6 子网；本版只支持 IPv4，不能安全开启混合子网选择。"
+  },
+  "子网路由器离线：{0}": {
+    "en": "Subnet router is offline: {0}",
+    "zh-Hant": "子網路路由器已離線：{0}",
+    "zh-Hans": "子网路由器离线：{0}"
+  },
+  "{0} 与当前直连内网重叠，已阻止通过 Tailscale 接管。": {
+    "en": "{0} overlaps the directly connected LAN. Routing it through Tailscale was blocked.",
+    "zh-Hant": "{0} 與目前直連的區域網路重疊，已阻止由 Tailscale 接管。",
+    "zh-Hans": "{0} 与当前直连内网重叠，已阻止通过 Tailscale 接管。"
+  },
+  "重叠子网 {0} 与 {1} 必须同时选择或同时停用。": {
+    "en": "Overlapping subnets {0} and {1} must both be selected or both disabled.",
+    "zh-Hant": "重疊的子網路 {0} 與 {1} 必須同時選取或同時停用。",
+    "zh-Hans": "重叠子网 {0} 与 {1} 必须同时选择或同时停用。"
+  },
+  "未找到本地物理默认网关，无法保护未选子网。": {
+    "en": "No physical default gateway was found. Unselected subnets cannot be protected.",
+    "zh-Hant": "找不到實體網路的預設閘道，無法保護未選取的子網路。",
+    "zh-Hans": "未找到本地物理默认网关，无法保护未选子网。"
+  },
+  "子网范围过大：{0}，本版拒绝自动接管小于 /8 的网段。": {
+    "en": "Subnet {0} is too broad. Prefixes shorter than /8 are not supported for automatic routing.",
+    "zh-Hant": "子網路範圍過大：{0}，此版本拒絕自動接管前綴長度小於 /8 的網段。",
+    "zh-Hans": "子网范围过大：{0}，本版拒绝自动接管小于 /8 的网段。"
+  },
+  "选中的子网走 Tailscale；未选子网固定走本地物理网络，绕过其他代理。": {
+    "en": "Selected subnets use Tailscale. Unselected subnets use the physical network, bypassing other proxies.",
+    "zh-Hant": "選取的子網路使用 Tailscale；未選取的子網路固定使用實體網路，略過其他代理。",
+    "zh-Hans": "选中的子网走 Tailscale；未选子网固定走本地物理网络，绕过其他代理。"
+  },
+  "Tailscale 原生接收开关会打开；本工具以更具体的本机路由实现选择。": {
+    "en": "Native Tailscale subnet acceptance will be enabled. More specific local routes enforce your selection.",
+    "zh-Hant": "將開啟 Tailscale 原生子網路接收功能，並以更明確的本機路由實現選取設定。",
+    "zh-Hans": "Tailscale 原生接收开关会打开；本工具以更具体的本机路由实现选择。"
+  },
+  "无法读取 Tailscale 设置，暂不能恢复。": {
+    "en": "Unable to read Tailscale settings. Restore is unavailable for now.",
+    "zh-Hant": "無法讀取 Tailscale 設定，暫時無法還原。",
+    "zh-Hans": "无法读取 Tailscale 设置，暂不能恢复。"
+  },
+  "恢复未完成事务应由执行器处理": {
+    "en": "Incomplete transactions must be recovered by the executor.",
+    "zh-Hant": "未完成的交易應由執行器復原",
+    "zh-Hans": "恢复未完成事务应由执行器处理"
+  },
+  "路由变更超过 1024 条，拒绝自动执行。": {
+    "en": "The plan exceeds 1,024 route changes and will not run automatically.",
+    "zh-Hant": "路由變更超過 1024 項，拒絕自動執行。",
+    "zh-Hans": "路由变更超过 1024 条，拒绝自动执行。"
+  },
+  "蒲公英 · 仅选定节点": {
+    "en": "Pgy · Selected Nodes Only",
+    "zh-Hant": "蒲公英 · 僅選取的節點",
+    "zh-Hans": "蒲公英 · 仅选定节点"
+  },
+  "恢复蒲公英原始路由": {
+    "en": "Restore Original Pgy Routes",
+    "zh-Hant": "還原蒲公英原始路由",
+    "zh-Hans": "恢复蒲公英原始路由"
+  },
+  "应用 Tailscale 子网选择": {
+    "en": "Apply Tailscale Subnet Routes",
+    "zh-Hant": "套用 Tailscale 子網路路由",
+    "zh-Hans": "应用 Tailscale 子网路由"
+  },
+  "恢复 Tailscale 原始设置": {
+    "en": "Restore Original Tailscale Settings",
+    "zh-Hant": "還原 Tailscale 原始設定",
+    "zh-Hans": "恢复 Tailscale 原始设置"
+  },
+  "回滚未完成的操作": {
+    "en": "Roll Back Interrupted Operation",
+    "zh-Hant": "復原未完成的操作",
+    "zh-Hans": "回滚未完成的操作"
+  },
+  "已有路由占用 {0}，拒绝覆盖：{1}": {
+    "en": "Route {0} is already occupied and will not be overwritten: {1}",
+    "zh-Hant": "路由 {0} 已被占用，拒絕覆寫：{1}",
+    "zh-Hans": "已有路由占用 {0}，拒绝覆盖：{1}"
+  },
+  "路由分片过多，拒绝继续。": {
+    "en": "Too many route fragments. The operation was stopped.",
+    "zh-Hant": "路由分割數量過多，拒絕繼續。",
+    "zh-Hans": "路由分片过多，拒绝继续。"
+  },
+  "无法确定直连内网路径": {
+    "en": "Unable to determine the directly connected LAN path.",
+    "zh-Hant": "無法確認直連區域網路的路徑",
+    "zh-Hans": "无法确定直连内网路径"
+  },
+  "单 IP 路由冲突，拒绝覆盖：{0}": {
+    "en": "Conflicting host route. It will not be overwritten: {0}",
+    "zh-Hant": "單一 IP 路由衝突，拒絕覆寫：{0}",
+    "zh-Hans": "单 IP 路由冲突，拒绝覆盖：{0}"
+  },
+  "命令超时：{0}": {
+    "en": "Command timed out: {0}",
+    "zh-Hant": "指令逾時：{0}",
+    "zh-Hans": "命令超时：{0}"
+  },
+  "CLI 未返回 JSON：{0}": {
+    "en": "The CLI did not return JSON: {0}",
+    "zh-Hant": "CLI 未傳回 JSON：{0}",
+    "zh-Hans": "CLI 未返回 JSON：{0}"
+  },
+  "未找到 Tailscale CLI；请先安装官方客户端。": {
+    "en": "Tailscale CLI was not found. Install the official client first.",
+    "zh-Hant": "找不到 Tailscale CLI，請先安裝官方用戶端。",
+    "zh-Hans": "未找到 Tailscale CLI；请先安装官方客户端。"
+  },
+  "蒲公英未运行，保留上次节点列表": {
+    "en": "Pgy is not running. Keeping the previous node list.",
+    "zh-Hant": "蒲公英未執行，保留上次的節點清單",
+    "zh-Hans": "蒲公英未运行，保留上次节点列表"
+  },
+  "蒲公英节点接口未就绪或返回格式不兼容": {
+    "en": "The Pgy node interface is not ready or its response format is incompatible.",
+    "zh-Hant": "蒲公英節點介面尚未就緒，或回應格式不相容",
+    "zh-Hans": "蒲公英节点接口未就绪或返回格式不兼容"
+  },
+  "无法创建蒲公英本机读取连接": {
+    "en": "Unable to create a local Pgy discovery connection.",
+    "zh-Hant": "無法建立蒲公英本機讀取連線",
+    "zh-Hans": "无法创建蒲公英本机读取连接"
+  },
+  "蒲公英本机服务未运行；请打开官方客户端": {
+    "en": "The local Pgy service is not running. Open the official client.",
+    "zh-Hant": "蒲公英本機服務未執行，請開啟官方用戶端",
+    "zh-Hans": "蒲公英本机服务未运行；请打开官方客户端"
+  },
+  "蒲公英节点读取接口不兼容": {
+    "en": "The Pgy node discovery interface is incompatible.",
+    "zh-Hant": "蒲公英節點讀取介面不相容",
+    "zh-Hans": "蒲公英节点读取接口不兼容"
+  },
+  "蒲公英节点读取超时": {
+    "en": "Pgy node discovery timed out.",
+    "zh-Hant": "蒲公英節點讀取逾時",
+    "zh-Hans": "蒲公英节点读取超时"
+  },
+  "蒲公英本机接口无响应；请稍后检查状态": {
+    "en": "The local Pgy interface is not responding. Check again shortly.",
+    "zh-Hant": "蒲公英本機介面沒有回應，請稍後再檢查",
+    "zh-Hans": "蒲公英本机接口无响应；请稍后检查状态"
+  },
+  "蒲公英节点响应中断或超出大小限制": {
+    "en": "The Pgy node response was interrupted or exceeded the size limit.",
+    "zh-Hant": "蒲公英節點回應中斷，或超過大小限制",
+    "zh-Hans": "蒲公英节点响应中断或超出大小限制"
+  },
+  "蒲公英本机服务连接失败": {
+    "en": "Unable to connect to the local Pgy service.",
+    "zh-Hant": "蒲公英本機服務連線失敗",
+    "zh-Hans": "蒲公英本机服务连接失败"
+  },
+  "蒲公英接口响应头无效": {
+    "en": "The Pgy response header is invalid.",
+    "zh-Hant": "蒲公英介面回應標頭無效",
+    "zh-Hans": "蒲公英接口响应头无效"
+  },
+  "蒲公英接口响应头不兼容": {
+    "en": "The Pgy response header is incompatible.",
+    "zh-Hant": "蒲公英介面回應標頭不相容",
+    "zh-Hans": "蒲公英接口响应头不兼容"
+  },
+  "蒲公英节点响应格式不兼容": {
+    "en": "The Pgy node response format is incompatible.",
+    "zh-Hant": "蒲公英節點回應格式不相容",
+    "zh-Hans": "蒲公英节点响应格式不兼容"
+  },
+  "只支持 plan applyTailscale --select <逗号分隔的 CIDR>，不会保存草稿或修改网络。": {
+    "en": "Only plan applyTailscale --select <comma-separated CIDRs> is supported. It does not save drafts or change the network.",
+    "zh-Hant": "僅支援 plan applyTailscale --select <以逗號分隔的 CIDR>，不會儲存草稿或修改網路。",
+    "zh-Hans": "只支持 plan applyTailscale --select <逗号分隔的 CIDR>，不会保存草稿或修改网络。"
+  },
+  "routebarctl inspect | plan applyPgy | plan restorePgy | plan applyTailscale [--select CIDR,CIDR] | plan restoreTailscale\n只读工具，不提供执行网络修改的命令。": {
+    "en": "routebarctl inspect | plan applyPgy | plan restorePgy | plan applyTailscale [--select CIDR,CIDR] | plan restoreTailscale\nRead-only tool. No commands apply network changes.",
+    "zh-Hant": "routebarctl inspect | plan applyPgy | plan restorePgy | plan applyTailscale [--select CIDR,CIDR] | plan restoreTailscale\n唯讀工具，不提供執行網路變更的指令。",
+    "zh-Hans": "routebarctl inspect | plan applyPgy | plan restorePgy | plan applyTailscale [--select CIDR,CIDR] | plan restoreTailscale\n只读工具，不提供执行网络修改的命令。"
+  },
+  "用法：RouteBarHelper --apply <base64-request>（需要管理员授权）": {
+    "en": "Usage: RouteBarHelper --apply <base64-request> (administrator authorization required)",
+    "zh-Hant": "用法：RouteBarHelper --apply <base64-request>（需要管理員授權）",
+    "zh-Hans": "用法：RouteBarHelper --apply <base64-request>（需要管理员授权）"
+  },
+  "无法编码执行结果": {
+    "en": "Unable to encode the operation result.",
+    "zh-Hant": "無法編碼執行結果",
+    "zh-Hans": "无法编码执行结果"
+  },
+  "保存配置失败：{0}": {
+    "en": "Unable to save settings: {0}",
+    "zh-Hant": "儲存設定失敗：{0}",
+    "zh-Hans": "保存配置失败：{0}"
+  },
+  "只读检查 · 尚未修改网络": {
+    "en": "Read-only check · No network changes made",
+    "zh-Hant": "唯讀檢查 · 尚未修改網路",
+    "zh-Hans": "只读检查 · 尚未修改网络"
+  },
+  "已连接 · {0}": {
+    "en": "Connected · {0}",
+    "zh-Hant": "已連線 · {0}",
+    "zh-Hans": "已连接 · {0}"
+  },
+  "待填写虚拟 IP": {
+    "en": "Enter Virtual IP",
+    "zh-Hant": "請填寫虛擬 IP",
+    "zh-Hans": "待填写虚拟 IP"
+  },
+  "未连接": {
+    "en": "Disconnected",
+    "zh-Hant": "未連線",
+    "zh-Hans": "未连接"
+  },
+  "未检测到": {
+    "en": "Not Detected",
+    "zh-Hant": "未偵測到",
+    "zh-Hans": "未检测到"
+  },
+  "开启": {
+    "en": "On",
+    "zh-Hant": "開啟",
+    "zh-Hans": "开启"
+  },
+  "关闭": {
+    "en": "Off",
+    "zh-Hant": "關閉",
+    "zh-Hans": "关闭"
+  },
+  "{0} · 子网接收{1}": {
+    "en": "{0} · Subnet routes {1}",
+    "zh-Hant": "{0} · 子網路接收{1}",
+    "zh-Hans": "{0} · 子网接收{1}"
+  },
+  "检查中…": {
+    "en": "Checking…",
+    "zh-Hant": "檢查中…",
+    "zh-Hans": "检查中…"
+  },
+  "没有未完成的操作": {
+    "en": "There is no interrupted operation.",
+    "zh-Hant": "沒有未完成的操作",
+    "zh-Hans": "没有未完成的操作"
+  },
+  "仅回滚执行记录中的操作；发生外部路由冲突时会停止。": {
+    "en": "Only recorded actions will be rolled back. Recovery stops if an external route conflict occurs.",
+    "zh-Hant": "僅復原執行記錄中的操作；若發生外部路由衝突，便會停止。",
+    "zh-Hans": "仅回滚执行记录中的操作；发生外部路由冲突时会停止。"
+  },
+  "回滚中断操作": {
+    "en": "Roll Back Interrupted Operation",
+    "zh-Hant": "復原中斷操作",
+    "zh-Hans": "回滚中断操作"
+  },
+  "请先回滚上次中断的操作": {
+    "en": "Roll back the previous interrupted operation first.",
+    "zh-Hant": "請先復原上次中斷的操作",
+    "zh-Hans": "请先回滚上次中断的操作"
+  },
+  "当前路由已符合选择，无需授权或修改。": {
+    "en": "Routes already match your selection. No authorization or changes are needed.",
+    "zh-Hant": "目前路由已符合選取設定，不需要授權或修改。",
+    "zh-Hans": "当前路由已符合选择，无需授权或修改。"
+  },
+  "找不到执行助手。请运行打包后的 RouteBar.app。": {
+    "en": "The helper could not be found. Run the packaged RouteBar.app.",
+    "zh-Hant": "找不到執行助手，請執行封裝後的 RouteBar.app。",
+    "zh-Hans": "找不到执行助手。请运行打包后的 RouteBar.app。"
+  },
+  "RouteBar 需要按预览修改本机路由；不会启动或连接 VPN。": {
+    "en": "RouteBar needs permission to apply the reviewed local routes. It will not start or connect a VPN.",
+    "zh-Hant": "RouteBar 需要依預覽修改本機路由；不會啟動或連線 VPN。",
+    "zh-Hans": "RouteBar 需要按预览修改本机路由；不会启动或连接 VPN。"
+  },
+  "无法读取执行结果": {
+    "en": "Unable to read the operation result.",
+    "zh-Hant": "無法讀取執行結果",
+    "zh-Hans": "无法读取执行结果"
+  },
+  "自动维护": {
+    "en": "Automatic Maintenance",
+    "zh-Hant": "自動維護",
+    "zh-Hans": "自动维护"
+  },
+  "手动切换": {
+    "en": "Manual Change",
+    "zh-Hant": "手動切換",
+    "zh-Hans": "手动切换"
+  },
+  "{0}未完成：{1}": {
+    "en": "{0} failed: {1}",
+    "zh-Hant": "{0}未完成：{1}",
+    "zh-Hans": "{0}未完成：{1}"
+  },
+  "蒲公英": {
+    "en": "Pgy",
+    "zh-Hant": "蒲公英",
+    "zh-Hans": "蒲公英"
+  },
+  "{0} 未连接，已应用模式暂不可用。": {
+    "en": "{0} is disconnected. The applied mode is temporarily unavailable.",
+    "zh-Hant": "{0} 未連線，已套用的模式暫時無法使用。",
+    "zh-Hans": "{0} 未连接，已应用模式暂不可用。"
+  },
+  "{0} 路由与已应用选择不同：{1} 项待修复。": {
+    "en": "{0} routes differ from the applied selection: {1} changes needed.",
+    "zh-Hant": "{0} 路由與已套用的選取設定不同：{1} 項待修復。",
+    "zh-Hans": "{0} 路由与已应用选择不同：{1} 项待修复。"
+  },
+  "一分钟内路由被反复改写，已停止自动维护。请检查 VPN 或代理配置。": {
+    "en": "Routes changed repeatedly within one minute. Automatic maintenance stopped. Check your VPN or proxy settings.",
+    "zh-Hant": "一分鐘內路由被反覆改寫，已停止自動維護。請檢查 VPN 或代理設定。",
+    "zh-Hans": "一分钟内路由被反复改写，已停止自动维护。请检查 VPN 或代理配置。"
+  },
+  "检测到路由变化，重新应用：{0}": {
+    "en": "Routes changed. Reapplying: {0}",
+    "zh-Hant": "偵測到路由變更，重新套用：{0}",
+    "zh-Hans": "检测到路由变化，重新应用：{0}"
+  },
+  "自动维护已暂停：{0}": {
+    "en": "Automatic maintenance paused: {0}",
+    "zh-Hant": "自動維護已暫停：{0}",
+    "zh-Hans": "自动维护已暂停：{0}"
+  },
+  "请输入有效的 IPv4 节点地址": {
+    "en": "Enter a valid IPv4 node address.",
+    "zh-Hant": "請輸入有效的 IPv4 節點位址",
+    "zh-Hans": "请输入有效的 IPv4 节点地址"
+  },
+  "该节点地址已存在": {
+    "en": "This node address is already listed.",
+    "zh-Hant": "此節點位址已存在",
+    "zh-Hans": "该节点地址已存在"
+  },
+  "第 {0} 行无有效 IPv4 地址，未导入任何节点。": {
+    "en": "Line {0} has no valid IPv4 address. No nodes were imported.",
+    "zh-Hant": "第 {0} 行沒有有效的 IPv4 位址，未匯入任何節點。",
+    "zh-Hans": "第 {0} 行无有效 IPv4 地址，未导入任何节点。"
+  },
+  "与 {0} 的 {1} 重叠": {
+    "en": "Overlaps {1} on {0}",
+    "zh-Hant": "與 {0} 的 {1} 重疊",
+    "zh-Hans": "与 {0} 的 {1} 重叠"
+  },
+  "诊断已复制到剪贴板（包含本机 IP 与节点名称，无登录凭据）": {
+    "en": "Diagnostics copied. Includes local IPs and node names, but no login credentials.",
+    "zh-Hant": "已複製診斷資訊（包含本機 IP 與節點名稱，不含登入憑證）",
+    "zh-Hans": "诊断已复制到剪贴板（包含本机 IP 与节点名称，无登录凭据）"
+  },
+  "路由维护中": {
+    "en": "Managing Routes",
+    "zh-Hant": "路由維護中",
+    "zh-Hans": "路由维护中"
+  },
+  "只读观察": {
+    "en": "Read-only Monitoring",
+    "zh-Hant": "唯讀監看",
+    "zh-Hans": "只读观察"
+  },
+  "立即检查": {
+    "en": "Check Now",
+    "zh-Hant": "立即檢查",
+    "zh-Hans": "立即检查"
+  },
+  "检查于 {0}": {
+    "en": "Checked at {0}",
+    "zh-Hant": "檢查時間：{0}",
+    "zh-Hans": "检查于 {0}"
+  },
+  "上次操作未完成，请打开管理窗口回滚": {
+    "en": "The last operation was interrupted. Open the manager to roll it back.",
+    "zh-Hant": "上次操作未完成，請開啟管理視窗以復原",
+    "zh-Hans": "上次操作未完成，请打开管理窗口回滚"
+  },
+  "管理节点与子网": {
+    "en": "Manage Nodes & Subnets",
+    "zh-Hant": "管理節點與子網路",
+    "zh-Hans": "管理节点与子网"
+  },
+  "右键图标可打开管理窗口": {
+    "en": "Right-click the icon to open the manager",
+    "zh-Hant": "在圖示上按右鍵可開啟管理視窗",
+    "zh-Hans": "右键图标可打开管理窗口"
+  },
+  "退出": {
+    "en": "Quit",
+    "zh-Hant": "結束",
+    "zh-Hans": "退出"
+  },
+  "让每条连接，走对的路": {
+    "en": "Keep connections on the right path",
+    "zh-Hant": "讓每條連線，走對的路",
+    "zh-Hans": "让每条连接，走对的路"
+  },
+  "RouteBar  /  本机路由管理": {
+    "en": "RouteBar  /  Local Route Manager",
+    "zh-Hant": "RouteBar  /  本機路由管理",
+    "zh-Hans": "RouteBar  /  本机路由管理"
+  },
+  "检查状态": {
+    "en": "Refresh",
+    "zh-Hant": "重新整理",
+    "zh-Hans": "检查状态"
+  },
+  "直连内网": {
+    "en": "Local Network",
+    "zh-Hant": "直連區域網路",
+    "zh-Hans": "直连内网"
+  },
+  "蒲公英节点": {
+    "en": "Pgy Nodes",
+    "zh-Hant": "蒲公英節點",
+    "zh-Hans": "蒲公英节点"
+  },
+  "Tailscale 子网": {
+    "en": "Tailscale Subnets",
+    "zh-Hant": "Tailscale 子網路",
+    "zh-Hans": "Tailscale 子网"
+  },
+  "检查与记录": {
+    "en": "Diagnostics & History",
+    "zh-Hant": "檢查與記錄",
+    "zh-Hans": "检查与记录"
+  },
+  "等待管理员授权 / 应用并验证路由…": {
+    "en": "Waiting for authorization / Applying and verifying routes…",
+    "zh-Hant": "等待管理員授權／套用並驗證路由…",
+    "zh-Hans": "等待管理员授权 / 应用并验证路由…"
+  },
+  "IPv4 · 每 10 秒检查": {
+    "en": "IPv4 · Checks every 10 seconds",
+    "zh-Hant": "IPv4 · 每 10 秒檢查",
+    "zh-Hans": "IPv4 · 每 10 秒检查"
+  },
+  "知道了": {
+    "en": "OK",
+    "zh-Hant": "好",
+    "zh-Hans": "知道了"
+  },
+  "本机虚拟 IP": {
+    "en": "Local Virtual IP",
+    "zh-Hant": "本機虛擬 IP",
+    "zh-Hans": "本机虚拟 IP"
+  },
+  "蒲公英客户端显示的本机 IPv4": {
+    "en": "This Mac’s IPv4 shown in Pgy",
+    "zh-Hant": "蒲公英用戶端顯示的本機 IPv4",
+    "zh-Hans": "蒲公英客户端显示的本机 IPv4"
+  },
+  "接口自动识别，无需填写 utun 编号": {
+    "en": "Interface detected automatically",
+    "zh-Hant": "自動辨識介面，無須填寫 utun 編號",
+    "zh-Hans": "接口自动识别，无需填写 utun 编号"
+  },
+  "未连接 · 不会自动启动蒲公英": {
+    "en": "Disconnected · Pgy will not be started automatically",
+    "zh-Hant": "未連線 · 不會自動啟動蒲公英",
+    "zh-Hans": "未连接 · 不会自动启动蒲公英"
+  },
+  "仅以下勾选的 IP 走蒲公英": {
+    "en": "Only selected IPs use Pgy",
+    "zh-Hant": "僅勾選的 IP 使用蒲公英",
+    "zh-Hans": "仅以下勾选的 IP 走蒲公英"
+  },
+  "刷新节点": {
+    "en": "Refresh Nodes",
+    "zh-Hant": "重新整理節點",
+    "zh-Hans": "刷新节点"
+  },
+  "批量导入": {
+    "en": "Bulk Import",
+    "zh-Hant": "批次匯入",
+    "zh-Hans": "批量导入"
+  },
+  "等待蒲公英节点列表": {
+    "en": "Waiting for Pgy nodes",
+    "zh-Hant": "等待蒲公英節點清單",
+    "zh-Hans": "等待蒲公英节点列表"
+  },
+  "连接官方客户端后点击刷新节点。也可手动添加节点或节点后的内网 IP。": {
+    "en": "Connect the official client, then refresh. You can also add nodes or individual LAN IPs manually.",
+    "zh-Hant": "連線官方用戶端後，請重新整理節點。也可手動新增節點或節點後方的區域網路 IP。",
+    "zh-Hans": "连接官方客户端后点击刷新节点。也可手动添加节点或节点后的内网 IP。"
+  },
+  "在线": {
+    "en": "Online",
+    "zh-Hant": "線上",
+    "zh-Hans": "在线"
+  },
+  "离线": {
+    "en": "Offline",
+    "zh-Hant": "離線",
+    "zh-Hans": "离线"
+  },
+  "从选择列表移除；点击应用后才更改路由": {
+    "en": "Remove from the list. Routes change only after applying.",
+    "zh-Hant": "從清單移除；確認套用後才會變更路由",
+    "zh-Hans": "从选择列表移除；点击应用后才更改路由"
+  },
+  "节点名称（可选）": {
+    "en": "Node name (optional)",
+    "zh-Hant": "節點名稱（選填）",
+    "zh-Hans": "节点名称（可选）"
+  },
+  "节点 IPv4": {
+    "en": "Node IPv4",
+    "zh-Hant": "節點 IPv4",
+    "zh-Hans": "节点 IPv4"
+  },
+  "添加": {
+    "en": "Add",
+    "zh-Hant": "新增",
+    "zh-Hans": "添加"
+  },
+  "重连后维护已应用模式": {
+    "en": "Maintain applied mode after reconnecting",
+    "zh-Hant": "重新連線後維護已套用的模式",
+    "zh-Hans": "重连后维护已应用模式"
+  },
+  "恢复原始路由": {
+    "en": "Restore Original Routes",
+    "zh-Hant": "還原原始路由",
+    "zh-Hans": "恢复原始路由"
+  },
+  "应用": {
+    "en": "Apply",
+    "zh-Hant": "套用",
+    "zh-Hans": "应用"
+  },
+  "已从蒲公英本机接口读取节点（排除本机）；新节点默认不勾选，预览并确认后才修改路由。": {
+    "en": "Nodes are read from the local Pgy service, excluding this Mac. New nodes are unchecked. Review and confirm to change routes.",
+    "zh-Hant": "已從蒲公英本機介面讀取節點（排除本機）；新節點預設不勾選，確認套用後才會修改路由。",
+    "zh-Hans": "已从蒲公英本机接口读取节点（排除本机）；新节点默认不勾选，预览并确认后才修改路由。"
+  },
+  "批量导入节点": {
+    "en": "Import Nodes",
+    "zh-Hant": "批次匯入節點",
+    "zh-Hans": "批量导入节点"
+  },
+  "每行一个：名称,IPv4 或单独 IPv4。导入只保存列表，不会修改网络。": {
+    "en": "One node per line: name,IPv4 or IPv4 only. Importing saves the list without changing the network.",
+    "zh-Hant": "每行一個節點：名稱,IPv4 或僅填 IPv4。匯入只會儲存清單，不會修改網路。",
+    "zh-Hans": "每行一个：名称,IPv4 或单独 IPv4。导入只保存列表，不会修改网络。"
+  },
+  "取消": {
+    "en": "Cancel",
+    "zh-Hant": "取消",
+    "zh-Hans": "取消"
+  },
+  "导入": {
+    "en": "Import",
+    "zh-Hant": "匯入",
+    "zh-Hans": "导入"
+  },
+  "选择由 Tailscale 接管的子网": {
+    "en": "Choose subnets to route through Tailscale",
+    "zh-Hant": "選取要由 Tailscale 接管的子網路",
+    "zh-Hans": "选择由 Tailscale 接管的子网"
+  },
+  "部分选择时，未选子网走本地物理网关；全不选只关闭子网接收。保留 DNS 与出口节点。": {
+    "en": "Unselected subnets use the physical gateway. Selecting none disables subnet acceptance. DNS and exit node settings are preserved.",
+    "zh-Hant": "未選取的子網路使用實體網路閘道；全部取消選取則關閉子網路接收。保留 DNS 與出口節點設定。",
+    "zh-Hans": "部分选择时，未选子网走本地物理网关；全不选只关闭子网接收。保留 DNS 与出口节点。"
+  },
+  "全不选": {
+    "en": "Deselect All",
+    "zh-Hant": "全部取消選取",
+    "zh-Hans": "全不选"
+  },
+  "未发现已批准的 IPv4 子网路由": {
+    "en": "No approved IPv4 subnet routes found",
+    "zh-Hant": "找不到已核准的 IPv4 子網路路由",
+    "zh-Hans": "未发现已批准的 IPv4 子网路由"
+  },
+  "直连内网优先": {
+    "en": "Local Network First",
+    "zh-Hant": "直連區域網路優先",
+    "zh-Hans": "直连内网优先"
+  },
+  "选择保存在本机，点击「预览」并确认后才生效。原生接收总开关与本机路由一起管理。": {
+    "en": "Selections are saved locally. Click Apply to review the changes, then confirm to apply them. Native route acceptance and local routes are managed together.",
+    "zh-Hant": "選取設定儲存在本機。按「套用」可預覽變更，確認後才會生效。原生接收開關與本機路由會一併管理。",
+    "zh-Hans": "选择保存在本机，点击“应用”预览更改，确认后才生效。原生接收开关与本机路由会一起管理。"
+  },
+  "检测到 IPv6 子网。本版无法安全开启混合选择；仍可关闭全部子网接收。": {
+    "en": "IPv6 subnets were detected. Mixed selections cannot be enabled safely in this version. You can still disable all subnet routes.",
+    "zh-Hant": "偵測到 IPv6 子網路。此版本無法安全啟用混合選取，但仍可關閉全部子網路接收。",
+    "zh-Hans": "检测到 IPv6 子网。本版无法安全开启混合选择；仍可关闭全部子网接收。"
+  },
+  "网络变化后维护已应用选择": {
+    "en": "Maintain applied selection after network changes",
+    "zh-Hant": "網路變更後維護已套用的選取設定",
+    "zh-Hans": "网络变化后维护已应用选择"
+  },
+  "恢复原始设置": {
+    "en": "Restore Original Settings",
+    "zh-Hant": "還原原始設定",
+    "zh-Hans": "恢复原始设置"
+  },
+  "执行记录与连接检查": {
+    "en": "Connection Checks & History",
+    "zh-Hant": "連線檢查與執行記錄",
+    "zh-Hans": "执行记录与连接检查"
+  },
+  "复制只读诊断": {
+    "en": "Copy Diagnostics",
+    "zh-Hant": "複製診斷資訊",
+    "zh-Hans": "复制只读诊断"
+  },
+  "已识别接口：": {
+    "en": "Detected interfaces: ",
+    "zh-Hant": "已辨識介面：",
+    "zh-Hans": "已识别接口："
+  },
+  "尚未执行路由修改。检查状态不会改变网络。": {
+    "en": "No route changes have been applied. Refreshing does not change the network.",
+    "zh-Hant": "尚未執行路由變更。檢查狀態不會修改網路。",
+    "zh-Hans": "尚未执行路由修改。检查状态不会改变网络。"
+  },
+  "恢复记录由执行助手保存在 /var/db/io.routebar。退出工具不会自动撤销已应用的模式；请先使用对应恢复按钮。": {
+    "en": "The helper stores recovery records in /var/db/io.routebar. Quitting does not undo applied modes. Use the corresponding restore button first.",
+    "zh-Hant": "執行助手會將復原記錄儲存在 /var/db/io.routebar。結束工具不會自動撤銷已套用的模式，請先使用對應的還原按鈕。",
+    "zh-Hans": "恢复记录由执行助手保存在 /var/db/io.routebar。退出工具不会自动撤销已应用的模式；请先使用对应恢复按钮。"
+  },
+  "请检查以下本机变更。执行时由 macOS 请求管理员授权；网络状态变化时会停止并要求重新预览。": {
+    "en": "Review these local changes. macOS will request administrator authorization when you confirm. If the network changes, you will need to review again.",
+    "zh-Hant": "請檢查以下本機變更。確認後，macOS 會要求管理員授權；若網路狀態改變，便須重新預覽。",
+    "zh-Hans": "请检查以下本机变更。执行时由 macOS 请求管理员授权；网络状态变化时会停止并要求重新预览。"
+  },
+  "无需修改路由，当前状态已符合选择。": {
+    "en": "No route changes are needed. The current state matches your selection.",
+    "zh-Hant": "不需要修改路由，目前狀態已符合選取設定。",
+    "zh-Hans": "无需修改路由，当前状态已符合选择。"
+  },
+  "共 {0} 项变更": {
+    "en": "{0} changes",
+    "zh-Hant": "共 {0} 項變更",
+    "zh-Hans": "共 {0} 项变更"
+  },
+  "确认并应用": {
+    "en": "Confirm and Apply",
+    "zh-Hant": "確認並套用",
+    "zh-Hans": "确认并应用"
+  },
+  "打开管理窗口": {
+    "en": "Open Manager",
+    "zh-Hant": "開啟管理視窗",
+    "zh-Hans": "打开管理窗口"
+  },
+  "关于 RouteBar": {
+    "en": "About RouteBar",
+    "zh-Hant": "關於 RouteBar",
+    "zh-Hans": "关于 RouteBar"
+  },
+  "退出 RouteBar": {
+    "en": "Quit RouteBar",
+    "zh-Hant": "結束 RouteBar",
+    "zh-Hans": "退出 RouteBar"
+  },
+  "编辑": {
+    "en": "Edit",
+    "zh-Hant": "編輯",
+    "zh-Hans": "编辑"
+  },
+  "撤销": {
+    "en": "Undo",
+    "zh-Hant": "復原",
+    "zh-Hans": "撤销"
+  },
+  "剪切": {
+    "en": "Cut",
+    "zh-Hant": "剪下",
+    "zh-Hans": "剪切"
+  },
+  "拷贝": {
+    "en": "Copy",
+    "zh-Hant": "拷貝",
+    "zh-Hans": "拷贝"
+  },
+  "粘贴": {
+    "en": "Paste",
+    "zh-Hant": "貼上",
+    "zh-Hans": "粘贴"
+  },
+  "全选": {
+    "en": "Select All",
+    "zh-Hant": "全選",
+    "zh-Hans": "全选"
+  },
+  "RouteBar 路由检查": {
+    "en": "RouteBar Route Status",
+    "zh-Hant": "RouteBar 路由狀態",
+    "zh-Hans": "RouteBar 路由检查"
+  },
+  " 路由": {
+    "en": " Routes",
+    "zh-Hant": " 路由",
+    "zh-Hans": " 路由"
+  },
+  "RouteBar · 只读观察": {
+    "en": "RouteBar · Read-only Monitoring",
+    "zh-Hant": "RouteBar · 唯讀監看",
+    "zh-Hans": "RouteBar · 只读观察"
+  },
+  "RouteBar · 节点与子网": {
+    "en": "RouteBar · Nodes & Subnets",
+    "zh-Hant": "RouteBar · 節點與子網路",
+    "zh-Hans": "RouteBar · 节点与子网"
+  },
+  "RouteBar · 蒲公英 {0} · Tailscale {1}": {
+    "en": "RouteBar · Pgy {0} · Tailscale {1}",
+    "zh-Hant": "RouteBar · 蒲公英 {0} · Tailscale {1}",
+    "zh-Hans": "RouteBar · 蒲公英 {0} · Tailscale {1}"
+  },
+  "跟随系统": {
+    "en": "Follow System",
+    "zh-Hant": "跟隨系統",
+    "zh-Hans": "跟随系统"
+  },
+  "语言": {
+    "en": "Language",
+    "zh-Hant": "語言",
+    "zh-Hans": "语言"
+  },
+  "预览路由更改": {
+    "en": "Review Route Changes",
+    "zh-Hant": "預覽路由變更",
+    "zh-Hans": "预览路由更改"
+  },
+  "语言切换立即生效": {
+    "en": "Language changes take effect immediately",
+    "zh-Hant": "切換語言立即生效",
+    "zh-Hans": "语言切换立即生效"
+  },
+  "Running": {
+    "en": "Running",
+    "zh-Hant": "已執行",
+    "zh-Hans": "已运行"
+  },
+  "Stopped": {
+    "en": "Stopped",
+    "zh-Hant": "已停止",
+    "zh-Hans": "已停止"
+  },
+  "Starting": {
+    "en": "Starting…",
+    "zh-Hant": "正在啟動…",
+    "zh-Hans": "正在启动…"
+  },
+  "NeedsLogin": {
+    "en": "Sign-in Required",
+    "zh-Hant": "需要登入",
+    "zh-Hans": "需要登录"
+  },
+  "NeedsMachineAuth": {
+    "en": "Device Approval Required",
+    "zh-Hant": "需要裝置授權",
+    "zh-Hans": "需要设备授权"
+  },
+  "NoState": {
+    "en": "Status Unavailable",
+    "zh-Hant": "無法取得狀態",
+    "zh-Hans": "无法获取状态"
+  },
+  "InUseOtherUser": {
+    "en": "In Use by Another User",
+    "zh-Hant": "由其他使用者使用中",
+    "zh-Hans": "由其他用户使用中"
+  },
+  "未检测到蒲公英": {
+    "en": "Pgy Not Detected",
+    "zh-Hant": "未偵測到蒲公英",
+    "zh-Hans": "未检测到蒲公英"
+  },
+  "蒲公英未运行": {
+    "en": "Pgy Is Not Running",
+    "zh-Hant": "蒲公英未執行",
+    "zh-Hans": "蒲公英未运行"
+  },
+  "不适用 · {0}": {
+    "en": "Not Applicable · {0}",
+    "zh-Hant": "不適用 · {0}",
+    "zh-Hans": "不适用 · {0}"
+  },
+  "蒲公英功能暂不适用。启动官方客户端后会自动重新检测。": {
+    "en": "Pgy controls are currently unavailable. Detection resumes automatically when you start the official client.",
+    "zh-Hant": "蒲公英功能暫不適用。啟動官方用戶端後會自動重新偵測。",
+    "zh-Hans": "蒲公英功能暂不适用。启动官方客户端后会自动重新检测。"
+  },
+  "已保存的节点和选择会保留，不会自动启动或连接蒲公英。": {
+    "en": "Saved nodes and selections are kept. RouteBar will not start or connect Pgy automatically.",
+    "zh-Hant": "已儲存的節點與選取設定會保留，不會自動啟動或連線蒲公英。",
+    "zh-Hans": "已保存的节点和选择会保留，不会自动启动或连接蒲公英。"
+  },
+  "仍有已应用的蒲公英路由记录，可在客户端可用后恢复。": {
+    "en": "Applied Pgy route records remain. You can restore them when the client is available.",
+    "zh-Hant": "仍有已套用的蒲公英路由記錄，可在用戶端可用後還原。",
+    "zh-Hans": "仍有已应用的蒲公英路由记录，可在客户端可用后恢复。"
+  },
+  "登录时启动": {
+    "en": "Launch at Login",
+    "zh-Hant": "登入時啟動",
+    "zh-Hans": "登录时启动"
+  },
+  "登录后仅显示菜单栏图标，不打开管理窗口。": {
+    "en": "Show only the menu bar icon at login, without opening the manager.",
+    "zh-Hant": "登入後僅顯示選單列圖示，不開啟管理視窗。",
+    "zh-Hans": "登录后仅显示菜单栏图标，不打开管理窗口。"
+  },
+  "需要在系统设置中允许登录时启动": {
+    "en": "Allow launch at login in System Settings.",
+    "zh-Hant": "需要在系統設定中允許登入時啟動",
+    "zh-Hans": "需要在系统设置中允许登录时启动"
+  },
+  "打开系统设置": {
+    "en": "Open System Settings",
+    "zh-Hant": "開啟系統設定",
+    "zh-Hans": "打开系统设置"
+  },
+  "无法更改登录启动设置：{0}": {
+    "en": "Could not change launch at login: {0}",
+    "zh-Hant": "無法變更登入啟動設定：{0}",
+    "zh-Hans": "无法更改登录启动设置：{0}"
+  },
+  "未识别": {
+    "en": "Not Detected",
+    "zh-Hant": "未識別",
+    "zh-Hans": "未识别"
+  },
+  "未识别本机虚拟 IP": {
+    "en": "Local Virtual IP Not Detected",
+    "zh-Hant": "未識別本機虛擬 IP",
+    "zh-Hans": "未识别本机虚拟 IP"
+  },
+  "由蒲公英客户端自动识别，仅供查看和复制。": {
+    "en": "Detected automatically from Pgy. View and copy only.",
+    "zh-Hant": "由蒲公英用戶端自動識別，僅供檢視與複製。",
+    "zh-Hans": "由蒲公英客户端自动识别，仅供查看和复制。"
+  }
+}

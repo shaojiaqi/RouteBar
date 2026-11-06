@@ -1,0 +1,7 @@
+.build/
+dist/
+.DS_Store
+*.local.json
+.swiftpm/
+PLAN.md
+*.log
