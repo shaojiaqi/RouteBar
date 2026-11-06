@@ -1098,5 +1098,10 @@
     "en": "Detected automatically from Pgy. View and copy only.",
     "zh-Hant": "由蒲公英用戶端自動識別，僅供檢視與複製。",
     "zh-Hans": "由蒲公英客户端自动识别，仅供查看和复制。"
+  },
+  "实际查路由未走预期接口：{0}（预期 {1}，实际 {2}）": {
+    "en": "The route lookup did not use the expected interface: {0} (expected {1}, actual {2})",
+    "zh-Hant": "實際查路由未走預期介面：{0}（預期 {1}，實際 {2}）",
+    "zh-Hans": "实际查路由未走预期接口：{0}（预期 {1}，实际 {2}）"
   }
 }

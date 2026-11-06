@@ -218,10 +218,12 @@ public enum RouteExecutor {
             let conflicts = s.routes.filter { !$0.isScoped && !$0.isCloned && $0.network.overlaps(route.network) && $0.network.prefix >= route.network.prefix && !$0.matchesTarget(route.target) }
             guard conflicts.isEmpty else { throw RouteBarError(L("其他程序添加了更具体路由：{0}", conflicts[0])) }
             let probes = Set([route.network.address, route.network.last, IPv4(value: route.network.address.value + (route.network.last.value - route.network.address.value) / 2)])
-            for ip in probes {
-                let output = try CommandRunner.checked("/sbin/route", ["-n", "get", ip.description])
+            for ip in probes.sorted() {
+                // Darwin otherwise infers a network lookup for addresses ending in .0,
+                // which can return the native /24 instead of the more-specific /25.
+                let output = try CommandRunner.checked("/sbin/route", ["-n", "get", "-host", ip.description])
                 let iface = output.components(separatedBy: .newlines).first { $0.trimmingCharacters(in: .whitespaces).hasPrefix("interface:") }?.split(separator: ":").last?.trimmingCharacters(in: .whitespaces)
-                guard iface == route.target.interface else { throw RouteBarError(L("实际查路由未走预期接口：{0}", ip)) }
+                guard iface == route.target.interface else { throw RouteBarError(L("实际查路由未走预期接口：{0}（预期 {1}，实际 {2}）", ip, route.target.interface, iface ?? L("未识别"))) }
             }
         }
         if kind == .applyPgy, let ti = s.pgyInterface(virtualIP: settings.pgyVirtualIP)?.name {

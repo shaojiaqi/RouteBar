@@ -107,10 +107,16 @@ dist/routebarctl plan applyTailscale --select 10.50.0.0/24
 
 ## Validation / 验证
 
-Version 0.2.0 (build 7): 52 automated tests cover parsing, tunnel identity, route planning, ownership, conflicts, rollback/recovery, installation detection, and localization. Release builds, bundle signatures, DMG integrity, and the mounted app have been checked. Tests use synthetic network data and do not modify live routes.
+Version 0.2.1 (build 8): 52 automated tests cover parsing, tunnel identity, route planning, ownership, conflicts, rollback/recovery, installation detection, and localization. Release builds, bundle signatures, DMG integrity, and the mounted app have been checked. Tests use synthetic network data and do not modify live routes.
 
-UI checks covered the three languages, Apply preview/cancel, the read-only virtual IP, and login-item control visibility. Actual launch at the next macOS login has not been verified. Automated tests do not establish compatibility with every VPN/proxy version or network topology.
+UI checks covered the three languages, Apply preview/cancel, the read-only virtual IP, and login-item control visibility. Version 0.2.1 was also verified by applying a single Tailscale subnet on macOS: the selected subnet resolved through Tailscale, excluded subnets through the physical gateway, and the directly connected LAN retained its physical interface. This verifies local routing, not reachability of every remote device. Actual launch at the next macOS login has not been verified. Automated tests do not establish compatibility with every VPN/proxy version or network topology.
 
 ## License
 
 [MIT](LICENSE). RouteBar is an independent project and is not affiliated with Oray/Pgy or Tailscale.
+
+## Changes in 0.2.1
+
+Fixed false rollback when applying Tailscale subnet selection. On macOS, `route get` can interpret a destination ending in `.0` as a network query and report the native subnet route instead of the more specific selection route. Verification now uses explicit `route get -host` lookups for all probe addresses, with deterministic probe order. Actual interface mismatches still trigger rollback, and the error now includes both expected and actual interfaces.
+
+修复 Tailscale 子网选择被错误回滚：验证 `.0` 地址时明确按主机地址查询，避免 macOS 将其视为网段查询而误判。真实的接口不匹配仍会回滚，并显示预期与实际接口。

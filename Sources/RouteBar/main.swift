@@ -10,7 +10,7 @@ import RouteBarCore
     private var openingPopover = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        AppDiagnostics.write("launch version=0.2.0")
+        AppDiagnostics.write("launch version=0.2.1")
         NSSetUncaughtExceptionHandler { exception in
             AppDiagnostics.write("uncaught-exception name=\(exception.name.rawValue) reason=\(exception.reason ?? "unknown")")
         }
