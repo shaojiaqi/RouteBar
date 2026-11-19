@@ -1,4 +1,38 @@
 {
+  "总览": { "en": "Overview", "zh-Hant": "總覽", "zh-Hans": "总览" },
+  "诊断": { "en": "Diagnostics", "zh-Hant": "診斷", "zh-Hans": "诊断" },
+  "设置": { "en": "Settings", "zh-Hant": "設定", "zh-Hans": "设置" },
+  "连接": { "en": "Connections", "zh-Hant": "連線", "zh-Hans": "连接" },
+  "路由状态": { "en": "Route Status", "zh-Hant": "路由狀態", "zh-Hans": "路由状态" },
+  "查看诊断": { "en": "View Diagnostics", "zh-Hant": "查看診斷", "zh-Hans": "查看诊断" },
+  "只读检查连接、当前路由和待应用选择": { "en": "Check connections, current routes, and draft selections without changing routes", "zh-Hant": "唯讀檢查連線、目前路由和待套用的選擇", "zh-Hans": "只读检查连接、当前路由和待应用选择" },
+  "节点": { "en": "Node", "zh-Hant": "節點", "zh-Hans": "节点" },
+  "子网": { "en": "Subnet", "zh-Hant": "子網", "zh-Hans": "子网" },
+  "当前路径": { "en": "Current Path", "zh-Hant": "目前路徑", "zh-Hans": "当前路径" },
+  "待应用": { "en": "Draft", "zh-Hant": "待套用", "zh-Hans": "待应用" },
+  "待应用：{0}": { "en": "Draft selection: {0}", "zh-Hant": "待套用：{0}", "zh-Hans": "待应用：{0}" },
+  "待应用 · 已选 {0} 项": { "en": "Draft · {0} selected", "zh-Hant": "待套用 · 已選 {0} 項", "zh-Hans": "待应用 · 已选 {0} 项" },
+  "预览更改": { "en": "Review Changes", "zh-Hant": "預覽變更", "zh-Hans": "预览更改" },
+  "无需修改系统路由；仍可记录此选择。": { "en": "No system routes need to change. You can still save this as the applied selection.", "zh-Hant": "無須修改系統路由；仍可將此選擇記錄為已套用。", "zh-Hans": "无需修改系统路由；仍可记录此选择。" },
+  "更多操作": { "en": "More Actions", "zh-Hant": "更多操作", "zh-Hans": "更多操作" },
+  "状态未知": { "en": "Unknown", "zh-Hant": "狀態未知", "zh-Hans": "状态未知" },
+  "添加节点": { "en": "Add Node", "zh-Hant": "新增節點", "zh-Hans": "添加节点" },
+  "移除手动节点": { "en": "Remove Manual Node", "zh-Hant": "移除手動新增的節點", "zh-Hans": "移除手动节点" },
+  "子网路由器离线或不可用": { "en": "Subnet router offline or unavailable", "zh-Hant": "子網路由器離線或無法使用", "zh-Hans": "子网路由器离线或不可用" },
+  "不选任何子网将关闭子网接收。": { "en": "An empty draft turns off subnet route acceptance.", "zh-Hant": "未選取任何子網時，會關閉子網路由接收。", "zh-Hans": "不选任何子网将关闭子网接收。" },
+  "通用": { "en": "General", "zh-Hant": "一般", "zh-Hans": "通用" },
+  "未启用": { "en": "Off", "zh-Hant": "未啟用", "zh-Hans": "未启用" },
+  "需要重新授权": { "en": "Authorization Required", "zh-Hant": "需要重新授權", "zh-Hans": "需要重新授权" },
+  "重连后维护蒲公英路由": { "en": "Maintain Pgy routes after reconnecting", "zh-Hant": "重新連線後維護蒲公英路由", "zh-Hans": "重连后维护蒲公英路由" },
+  "网络变化后维护 Tailscale 路由": { "en": "Maintain Tailscale routes after network changes", "zh-Hant": "網路變更後維護 Tailscale 路由", "zh-Hans": "网络变化后维护 Tailscale 路由" },
+  "自动维护需要后台路由授权。": { "en": "Automatic maintenance requires background route access.", "zh-Hant": "自動維護需要背景路由授權。", "zh-Hans": "自动维护需要后台路由授权。" },
+  "活动记录": { "en": "Activity Log", "zh-Hant": "活動記錄", "zh-Hans": "活动记录" },
+  "正在应用…": { "en": "Applying…", "zh-Hant": "正在套用…", "zh-Hans": "正在应用…" },
+  "无法启动 RouteBar": {
+    "en": "RouteBar could not start",
+    "zh-Hant": "無法啟動 RouteBar",
+    "zh-Hans": "无法启动 RouteBar"
+  },
   "操作失败，已回滚：{0}": {
     "en": "Operation failed and was rolled back: {0}",
     "zh-Hant": "操作失敗，已復原：{0}",
@@ -253,6 +287,11 @@
     "en": "Some selected subnets are no longer advertised. Refresh and select again.",
     "zh-Hant": "部分選取的子網路已撤回，請重新整理並再次選取。",
     "zh-Hans": "部分选择的子网已撤销，请刷新并重新选择。"
+  },
+  "部分已选子网当前不可用。": {
+    "en": "Some selected subnets are currently unavailable.",
+    "zh-Hant": "部分已選子網路目前無法使用。",
+    "zh-Hans": "部分已选子网当前不可用。"
   },
   "发现 IPv6 子网；本版只支持 IPv4，不能安全开启混合子网选择。": {
     "en": "IPv6 subnets were detected. This version supports IPv4 only and cannot safely enable a mixed selection.",
@@ -664,6 +703,31 @@
     "zh-Hant": "重新整理",
     "zh-Hans": "检查状态"
   },
+  "待应用选择可用：1 项变更": {
+    "en": "Selection is ready: 1 change to review",
+    "zh-Hant": "待套用選擇可用：1 項變更",
+    "zh-Hans": "待应用选择可用：1 项变更"
+  },
+  "待应用选择可用：{0} 项变更": {
+    "en": "Selection is ready: {0} changes to review",
+    "zh-Hant": "待套用選擇可用：{0} 項變更",
+    "zh-Hans": "待应用选择可用：{0} 项变更"
+  },
+  "待应用选择有冲突：{0}": {
+    "en": "Selection conflict: {0}",
+    "zh-Hant": "待套用選擇有衝突：{0}",
+    "zh-Hans": "待应用选择有冲突：{0}"
+  },
+  "等待网络就绪：{0}": {
+    "en": "Waiting for network: {0}",
+    "zh-Hant": "等待網路就緒：{0}",
+    "zh-Hans": "等待网络就绪：{0}"
+  },
+  "VPN 客户端或已选路由当前不可用。": {
+    "en": "The VPN client or a selected route is currently unavailable.",
+    "zh-Hant": "VPN 用戶端或已選路由目前無法使用。",
+    "zh-Hans": "VPN 客户端或已选路由当前不可用。"
+  },
   "直连内网": {
     "en": "Local Network",
     "zh-Hant": "直連區域網路",
@@ -719,10 +783,45 @@
     "zh-Hant": "未連線 · 不會自動啟動蒲公英",
     "zh-Hans": "未连接 · 不会自动启动蒲公英"
   },
-  "仅以下勾选的 IP 走蒲公英": {
-    "en": "Only selected IPs use Pgy",
-    "zh-Hant": "僅勾選的 IP 使用蒲公英",
-    "zh-Hans": "仅以下勾选的 IP 走蒲公英"
+  "选择走蒲公英的节点": {
+    "en": "Nodes to route through Pgy",
+    "zh-Hant": "選擇走蒲公英的節點",
+    "zh-Hans": "选择走蒲公英的节点"
+  },
+  "载入上次选择": {
+    "en": "Load Last Selection",
+    "zh-Hant": "載入上次選擇",
+    "zh-Hans": "载入上次选择"
+  },
+  "将上次应用的节点填回勾选列表，不修改路由。": {
+    "en": "Restore the last applied checkboxes without changing routes.",
+    "zh-Hant": "載入上次套用的勾選，不修改路由。",
+    "zh-Hans": "载入上次应用的勾选，不修改路由。"
+  },
+  "更改待应用的选择": {
+    "en": "Edit the selection to apply",
+    "zh-Hant": "變更待套用的選擇",
+    "zh-Hans": "更改待应用的选择"
+  },
+  "走此 VPN": {
+    "en": "Via this VPN",
+    "zh-Hant": "經此 VPN",
+    "zh-Hans": "走此 VPN"
+  },
+  "不走此 VPN": {
+    "en": "Outside this VPN",
+    "zh-Hant": "不經此 VPN",
+    "zh-Hans": "不走此 VPN"
+  },
+  "部分走此 VPN": {
+    "en": "Partly via this VPN",
+    "zh-Hant": "部分經此 VPN",
+    "zh-Hans": "部分走此 VPN"
+  },
+  "路由未确认": {
+    "en": "Route Unverified",
+    "zh-Hant": "路由未確認",
+    "zh-Hans": "路由未确认"
   },
   "刷新节点": {
     "en": "Refresh Nodes",
@@ -788,11 +887,6 @@
     "en": "Apply",
     "zh-Hant": "套用",
     "zh-Hans": "应用"
-  },
-  "已从蒲公英本机接口读取节点（排除本机）；新节点默认不勾选，预览并确认后才修改路由。": {
-    "en": "Nodes are read from the local Pgy service, excluding this Mac. New nodes are unchecked. Review and confirm to change routes.",
-    "zh-Hant": "已從蒲公英本機介面讀取節點（排除本機）；新節點預設不勾選，確認套用後才會修改路由。",
-    "zh-Hans": "已从蒲公英本机接口读取节点（排除本机）；新节点默认不勾选，预览并确认后才修改路由。"
   },
   "批量导入节点": {
     "en": "Import Nodes",
@@ -1098,6 +1192,111 @@
     "en": "Detected automatically from Pgy. View and copy only.",
     "zh-Hant": "由蒲公英用戶端自動識別，僅供檢視與複製。",
     "zh-Hans": "由蒲公英客户端自动识别，仅供查看和复制。"
+  },
+  "后台路由授权": {
+    "en": "Background Route Access",
+    "zh-Hant": "背景路由授權",
+    "zh-Hans": "后台路由授权"
+  },
+  "自动维护已暂停": {
+    "en": "Automatic Maintenance Paused",
+    "zh-Hant": "自動維護已暫停",
+    "zh-Hans": "自动维护已暂停"
+  },
+  "路由已应用": {
+    "en": "Routes Applied",
+    "zh-Hant": "路由已套用",
+    "zh-Hans": "路由已应用"
+  },
+  "此构建仅支持手动授权": {
+    "en": "This build supports manual authorization only",
+    "zh-Hant": "此版本僅支援手動授權",
+    "zh-Hans": "此构建仅支持手动授权"
+  },
+  "等待系统批准": {
+    "en": "Awaiting System Approval",
+    "zh-Hant": "等待系統核准",
+    "zh-Hans": "等待系统批准"
+  },
+  "撤销授权": {
+    "en": "Revoke Access",
+    "zh-Hant": "撤銷授權",
+    "zh-Hans": "撤销授权"
+  },
+  "服务不可用": {
+    "en": "Service Unavailable",
+    "zh-Hant": "服務無法使用",
+    "zh-Hans": "服务不可用"
+  },
+  "已启用": {
+    "en": "Enabled",
+    "zh-Hant": "已啟用",
+    "zh-Hans": "已启用"
+  },
+  "启用后台授权": {
+    "en": "Enable Background Access",
+    "zh-Hant": "啟用背景授權",
+    "zh-Hans": "启用后台授权"
+  },
+  "重新授权": {
+    "en": "Authorize Again",
+    "zh-Hant": "重新授權",
+    "zh-Hans": "重新授权"
+  },
+  "RouteBar 请求启用后台路由授权，允许此版本在重连时维护已应用路由。": {
+    "en": "RouteBar requests background route access so this version can maintain applied routes after reconnecting.",
+    "zh-Hant": "RouteBar 要求背景路由授權，讓此版本能在重新連線後維護已套用的路由。",
+    "zh-Hans": "RouteBar 请求启用后台路由授权，允许此版本在重连时维护已应用路由。"
+  },
+  "RouteBar 请求撤销后台路由授权。": {
+    "en": "RouteBar requests removal of its background route access.",
+    "zh-Hant": "RouteBar 要求撤銷背景路由授權。",
+    "zh-Hans": "RouteBar 请求撤销后台路由授权。"
+  },
+  "手动授权并应用": {
+    "en": "Authorize Manually and Apply",
+    "zh-Hant": "手動授權並套用",
+    "zh-Hans": "手动授权并应用"
+  },
+  "使用已批准的后台服务。网络状态变化时需重新预览。": {
+    "en": "Uses the approved background service. Review the changes again if the network changes.",
+    "zh-Hant": "使用已核准的背景服務。網路狀態變更時需重新預覽。",
+    "zh-Hans": "使用已批准的后台服务。网络状态变化时需重新预览。"
+  },
+  "无法更改后台路由授权：{0}": {
+    "en": "Could not change background route access: {0}",
+    "zh-Hant": "無法變更背景路由授權：{0}",
+    "zh-Hans": "无法更改后台路由授权：{0}"
+  },
+  "自动维护已暂停，后台路由授权不可用。": {
+    "en": "Automatic maintenance is paused because background route access is unavailable.",
+    "zh-Hant": "背景路由授權無法使用，自動維護已暫停。",
+    "zh-Hans": "自动维护已暂停，后台路由授权不可用。"
+  },
+  "没有可自动维护的已应用选择。": {
+    "en": "There is no applied selection to maintain automatically.",
+    "zh-Hant": "沒有可自動維護的已套用選擇。",
+    "zh-Hans": "没有可自动维护的已应用选择。"
+  },
+  "路由请求过大。": {
+    "en": "The route request is too large.",
+    "zh-Hant": "路由請求過大。",
+    "zh-Hans": "路由请求过大。"
+  },
+  "只有当前登录的用户可以修改路由。": {
+    "en": "Only the active console user can change routes.",
+    "zh-Hant": "只有目前登入的使用者可以變更路由。",
+    "zh-Hans": "只有当前登录的用户可以修改路由。"
+  },
+  "后台路由服务与请求不兼容。": {
+    "en": "The background route service is incompatible with this request.",
+    "zh-Hant": "背景路由服務與請求不相容。",
+    "zh-Hans": "后台路由服务与请求不兼容。"
+  },
+  "未收到后台路由服务的结果，请检查授权和当前路由状态。": {
+    "en": "No result from the background route service. Check its authorization and your current routes.",
+    "zh-Hant": "未收到背景路由服務的結果，請檢查授權及目前的路由狀態。",
+    "zh-Hans": "未收到后台路由服务的结果，请检查授权和当前路由状态。"
   },
   "实际查路由未走预期接口：{0}（预期 {1}，实际 {2}）": {
     "en": "The route lookup did not use the expected interface: {0} (expected {1}, actual {2})",

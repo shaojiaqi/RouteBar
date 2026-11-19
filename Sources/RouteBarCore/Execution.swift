@@ -95,8 +95,12 @@ public struct HelperResponse: Codable {
     public var message: String
     public var warnings: [String]
     public var state: SessionState?
-    public init(success: Bool, message: String, warnings: [String] = [], state: SessionState? = nil) {
+    public var networkChanged: Bool?
+    public var waitingForNetwork: Bool?
+    public init(success: Bool, message: String, warnings: [String] = [], state: SessionState? = nil, networkChanged: Bool? = nil, waitingForNetwork: Bool? = nil) {
         self.success = success; self.message = message; self.warnings = warnings; self.state = state
+        self.networkChanged = networkChanged
+        self.waitingForNetwork = waitingForNetwork
     }
 }
 
@@ -104,42 +108,69 @@ public enum RouteExecutor {
     public static func apply(_ request: ChangeRequest) throws -> HelperResponse {
         guard geteuid() == 0 else { throw RouteBarError(L("执行切换必须由系统管理员授权")) }
         guard request.uid >= 500, getpwuid(request.uid) != nil else { throw RouteBarError(L("无效用户")) }
+        return try withExclusiveLock { try applyLocked(request) }
+    }
+
+    static func withExclusiveLock<T>(_ operation: () throws -> T) throws -> T {
         try JournalStore.prepareDirectory()
         let lockPath = JournalStore.directory.appendingPathComponent("executor.lock").path
-        let lockFD = open(lockPath, O_RDWR | O_CREAT | O_NOFOLLOW, 0o600)
+        let lockFD = open(lockPath, O_RDWR | O_CREAT | O_NOFOLLOW | O_CLOEXEC, 0o600)
         guard lockFD >= 0 else { throw RouteBarError(L("无法创建执行锁")) }
         defer { close(lockFD) }
         guard flock(lockFD, LOCK_EX | LOCK_NB) == 0 else { throw RouteBarError(L("另一个路由操作正在执行，请稍后再试。")) }
         defer { flock(lockFD, LOCK_UN) }
+        return try operation()
+    }
+
+    private static func applyLocked(_ request: ChangeRequest) throws -> HelperResponse {
         var journal = try JournalStore.read(uid: request.uid)
+        return try applyTransaction(request, journal: &journal,
+            collect: { try NetworkSnapshot.collect(clientUID: request.uid) },
+            persist: { try JournalStore.write($0, uid: request.uid) },
+            execute: { try execute($0, recovering: $1, clientUID: request.uid) },
+            verify: { try verify($0, kind: request.kind, settings: $1, clientUID: request.uid) })
+    }
+
+    static func applyTransaction(_ request: ChangeRequest, journal: inout SessionJournal,
+                                 collect: () throws -> NetworkSnapshot,
+                                 persist: (SessionJournal) throws -> Void,
+                                 execute: (Mutation, Bool) throws -> Void,
+                                 verify: (SessionState, AppSettings) throws -> Void) throws -> HelperResponse {
+        let settings: AppSettings
+        if request.maintenance == true {
+            guard let approved = journal.state.maintenanceSettings(for: request.kind) else {
+                throw RouteBarError(L("没有可自动维护的已应用选择。"))
+            }
+            settings = approved
+        } else {
+            settings = request.settings
+        }
         if request.kind == .recover {
-            try recover(&journal, uid: request.uid)
+            try TransactionEngine.recover(journal: &journal, persist: persist, execute: execute)
             return HelperResponse(success: true, message: L("已回滚中断的操作"), state: journal.state)
         }
         guard journal.pending == nil else { throw RouteBarError(L("上次操作中断，请先回滚未完成操作。")) }
-        let snapshot = try NetworkSnapshot.collect(clientUID: request.uid)
-        guard snapshot.fingerprint == request.expectedFingerprint else { throw RouteBarError(L("网络状态已变化，未执行修改。请刷新并重新预览。")) }
-        let plan = try RoutePlanner.make(kind: request.kind, settings: request.settings, snapshot: snapshot, session: journal.state)
+        let snapshot = try collect()
+        guard snapshot.fingerprint == request.expectedFingerprint else {
+            return HelperResponse(success: false, message: L("网络状态已变化，未执行修改。请刷新并重新预览。"), networkChanged: true)
+        }
+        let plan: ChangePlan
+        do { plan = try RoutePlanner.make(kind: request.kind, settings: settings, snapshot: snapshot, session: journal.state) }
+        catch let error as RouteNotReady {
+            return HelperResponse(success: false, message: error.localizedDescription, waitingForNetwork: true)
+        }
         if !plan.hasChanges {
             journal.state = plan.after
-            try JournalStore.write(journal, uid: request.uid)
+            try persist(journal)
             return HelperResponse(success: true, message: L("路由已符合所选模式"), warnings: plan.warnings, state: journal.state)
         }
         do {
             try TransactionEngine.commit(plan: plan, journal: &journal,
-                persist: { try JournalStore.write($0, uid: request.uid) },
-                execute: { try execute($0, recovering: $1, clientUID: request.uid) },
-                verify: { try verify(plan.after, kind: request.kind, settings: request.settings, clientUID: request.uid) })
+                persist: persist, execute: execute, verify: { try verify(plan.after, settings) })
             return HelperResponse(success: true, message: L("{0} · 已验证", plan.summary), warnings: plan.warnings, state: journal.state)
         } catch let error as TransactionError {
             return HelperResponse(success: false, message: error.localizedDescription, state: journal.state)
         }
-    }
-
-    private static func recover(_ journal: inout SessionJournal, uid: UInt32) throws {
-        try TransactionEngine.recover(journal: &journal,
-            persist: { try JournalStore.write($0, uid: uid) },
-            execute: { try execute($0, recovering: $1, clientUID: uid) })
     }
 
     private static func table() throws -> [RouteEntry] { RouteEntry.parse(try CommandRunner.checked("/usr/sbin/netstat", ["-rn", "-f", "inet"])) }
@@ -219,10 +250,7 @@ public enum RouteExecutor {
             guard conflicts.isEmpty else { throw RouteBarError(L("其他程序添加了更具体路由：{0}", conflicts[0])) }
             let probes = Set([route.network.address, route.network.last, IPv4(value: route.network.address.value + (route.network.last.value - route.network.address.value) / 2)])
             for ip in probes.sorted() {
-                // Darwin otherwise infers a network lookup for addresses ending in .0,
-                // which can return the native /24 instead of the more-specific /25.
-                let output = try CommandRunner.checked("/sbin/route", ["-n", "get", "-host", ip.description])
-                let iface = output.components(separatedBy: .newlines).first { $0.trimmingCharacters(in: .whitespaces).hasPrefix("interface:") }?.split(separator: ":").last?.trimmingCharacters(in: .whitespaces)
+                let iface = try CommandRunner.routeInterface(for: ip)
                 guard iface == route.target.interface else { throw RouteBarError(L("实际查路由未走预期接口：{0}（预期 {1}，实际 {2}）", ip, route.target.interface, iface ?? L("未识别"))) }
             }
         }

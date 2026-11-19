@@ -41,10 +41,20 @@ public enum CommandRunner {
         guard r.status == 0 else { throw RouteBarError("\(URL(fileURLWithPath: executable).lastPathComponent)：\((r.output + r.errorOutput).trimmingCharacters(in: .whitespacesAndNewlines).prefix(800))") }
         return r.output
     }
+    public static func routeInterface(for ip: IPv4, timeout: TimeInterval = 10) throws -> String? {
+        // Force a host lookup even for addresses ending in .0.
+        let output = try checked("/sbin/route", ["-n", "get", "-host", ip.description], timeout: timeout)
+        return output.components(separatedBy: .newlines).first { $0.trimmingCharacters(in: .whitespaces).hasPrefix("interface:") }?
+            .split(separator: ":").last?.trimmingCharacters(in: .whitespaces)
+    }
     public static func tailscale(_ executable: String, _ arguments: [String], clientUID: UInt32? = nil, timeout: TimeInterval = 10) throws -> String {
         // The macOS CLI talks to the logged-in user's app. Never start a separate root GUI context.
         if geteuid() == 0, let uid = clientUID, uid >= 500 {
-            return try checked("/usr/bin/sudo", ["-H", "-u", "#\(uid)", "/usr/bin/env", "TAILSCALE_BE_CLI=1", executable] + arguments, timeout: timeout)
+            let runAsUser = ["/usr/bin/sudo", "-H", "-u", "#\(uid)", "/usr/bin/env", "TAILSCALE_BE_CLI=1", executable] + arguments
+            if executable == "/Applications/Tailscale.app/Contents/MacOS/Tailscale" {
+                return try checked("/bin/launchctl", ["asuser", String(uid)] + runAsUser, timeout: timeout)
+            }
+            return try checked("/usr/bin/sudo", Array(runAsUser.dropFirst()), timeout: timeout)
         }
         return try checked(executable, arguments, timeout: timeout)
     }
@@ -125,15 +135,17 @@ public struct AppSettings: Codable {
     public var maintainTailscale = false
     public init() {}
     public static var directory: URL { FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support/RouteBar", isDirectory: true) }
-    public static func load() -> Self {
+    public static func load() -> Self { load(from: directory) }
+    static func load(from directory: URL) -> Self {
         guard let d = try? Data(contentsOf: directory.appendingPathComponent("settings.json")), let s = try? JSONDecoder().decode(Self.self, from: d) else { return Self() }
-        // Maintenance always needs an explicit opt-in after launching the app.
-        var settings = s; settings.maintainPgy = false; settings.maintainTailscale = false; return settings
+        return s
     }
-    public func save() throws {
-        try FileManager.default.createDirectory(at: Self.directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+    public func save() throws { try save(to: Self.directory) }
+    func save(to directory: URL) throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         let data = try JSONEncoder().encode(self)
-        try data.write(to: Self.directory.appendingPathComponent("settings.json"), options: [.atomic])
-        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: Self.directory.appendingPathComponent("settings.json").path)
+        let file = directory.appendingPathComponent("settings.json")
+        try data.write(to: file, options: [.atomic])
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
     }
 }

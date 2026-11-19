@@ -132,6 +132,9 @@ public struct TailscaleSubnet: Codable, Hashable, Identifiable {
     public var routers: [String]
     public var online: Bool
     public var id: String { network.description }
+    public init(network: CIDR, routers: [String], online: Bool) {
+        self.network = network; self.routers = routers; self.online = online
+    }
 }
 
 public struct TailscaleState: Codable {

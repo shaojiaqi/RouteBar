@@ -1,4 +1,5 @@
 import XCTest
+import Security
 @testable import RouteBarCore
 
 final class NetworkTests: XCTestCase {
@@ -81,6 +82,73 @@ final class NetworkTests: XCTestCase {
 }
 
 final class PlannerTests: XCTestCase {
+    func testMaintenanceUsesApprovedNodesOnTheRecreatedTunnel() throws {
+        let applied = try RoutePlanner.make(kind: .applyPgy, settings: pgySettings(), snapshot: fixture(), session: SessionState()).after
+        var reconnected = fixture()
+        reconnected.interfaces[2] = InterfaceAddress(name: "utun29", address: IPv4("172.16.0.167")!, network: CIDR("172.16.0.0/13")!, pointToPoint: true)
+        reconnected.routes[1] = RouteEntry(network: CIDR("172.16.0.0/13")!, gateway: "172.16.0.167", interface: "utun29", flags: "UGSc")
+
+        let saved = try XCTUnwrap(applied.maintenanceSettings(for: .applyPgy))
+        let maintenance = try RoutePlanner.make(kind: .applyPgy, settings: saved, snapshot: reconnected, session: applied)
+        XCTAssertEqual(maintenance.after.pgyManaged.map(\.target.interface), ["utun29"])
+        XCTAssertEqual(maintenance.after.pgySelection, ["172.16.0.3"])
+        XCTAssertEqual(maintenance.after.pgyOriginals.map(\.interface), ["utun29"])
+
+        reconnected.interfaces[0] = InterfaceAddress(name: "en0", address: IPv4("172.16.0.2")!, network: CIDR("172.16.0.0/24")!, pointToPoint: false)
+        XCTAssertThrowsError(try RoutePlanner.make(kind: .applyPgy, settings: saved, snapshot: reconnected, session: applied))
+        XCTAssertNil(applied.maintenanceSettings(for: .restorePgy))
+        XCTAssertNil(applied.maintenanceSettings(for: .applyTailscale))
+    }
+
+    func testMaintenanceRecoversTheAppliedTailscaleSelectionFromJournal() throws {
+        let snapshot = fixture()
+        var selected = AppSettings(); selected.selectedSubnets = ["192.168.30.0/24"]
+        let applied = try RoutePlanner.make(kind: .applyTailscale, settings: selected, snapshot: snapshot, session: SessionState()).after
+        let saved = try XCTUnwrap(applied.maintenanceSettings(for: .applyTailscale))
+        XCTAssertEqual(saved.selectedSubnets, ["192.168.30.0/24"])
+        let plan = try RoutePlanner.make(kind: .applyTailscale, settings: saved, snapshot: snapshot, session: applied)
+        XCTAssertEqual(plan.after.tailscaleSelection, saved.selectedSubnets)
+        let officeOverlays = Set(plan.after.tailscaleManaged.filter { $0.target == .interface("en0") }.map(\.network))
+        XCTAssertEqual(officeOverlays, Set(CIDR("10.20.0.0/24")!.children))
+    }
+
+    func testMaintenanceWaitsForTailscaleReconnectAndRetargetsApprovedSubnets() throws {
+        let snapshot = fixture()
+        let subnetID = "192.168.30.0/24"
+        var selected = AppSettings(); selected.selectedSubnets = [subnetID]
+        let applied = try RoutePlanner.make(kind: .applyTailscale, settings: selected, snapshot: snapshot, session: .init()).after
+        let approved = try XCTUnwrap(applied.maintenanceSettings(for: .applyTailscale))
+        let router = try XCTUnwrap(snapshot.tailscale?.subnets.first { $0.id == subnetID })
+        var reconnected = snapshot
+        let oldTunnel = snapshot.interfaces[1]
+        reconnected.interfaces[1] = InterfaceAddress(name: "utun29", address: oldTunnel.address, network: oldTunnel.network, pointToPoint: true)
+
+        func plan(_ state: NetworkSnapshot) throws -> ChangePlan {
+            try RoutePlanner.make(kind: .applyTailscale, settings: approved, snapshot: state, session: applied)
+        }
+
+        reconnected.tailscale?.acceptsRoutes = nil
+        XCTAssertThrowsError(try plan(reconnected)) { XCTAssertTrue($0 is RouteNotReady) }
+        reconnected.tailscale?.acceptsRoutes = false
+        reconnected.tailscale?.subnets.removeAll { $0.id == subnetID }
+        XCTAssertThrowsError(try plan(reconnected)) { XCTAssertTrue($0 is RouteNotReady) }
+        reconnected.tailscale?.subnets.append(TailscaleSubnet(network: router.network, routers: router.routers, online: false))
+        XCTAssertThrowsError(try plan(reconnected)) { XCTAssertTrue($0 is RouteNotReady) }
+
+        var office = reconnected
+        office.interfaces[0] = InterfaceAddress(name: "en0", address: IPv4("192.168.30.50")!, network: router.network, pointToPoint: false)
+        XCTAssertThrowsError(try plan(office)) { XCTAssertTrue($0 is RouteBarError) }
+
+        reconnected.tailscale?.subnets.removeAll { $0.id == subnetID }
+        reconnected.tailscale?.subnets.append(router)
+        let resumed = try plan(reconnected)
+        XCTAssertEqual(resumed.after.tailscaleSelection, [subnetID])
+        XCTAssertTrue(resumed.actions.contains(.acceptRoutes(from: false, to: true)))
+        let tunnelRoutes = resumed.after.tailscaleManaged.filter { $0.target == .interface("utun29") }
+        XCTAssertEqual(Set(tunnelRoutes.map(\.network)), Set(router.network.children))
+        XCTAssertFalse(resumed.after.tailscaleManaged.contains { $0.target == .interface("utun3") })
+    }
+
     func testPgyPinsNodesBeforeRemovingBroadRoute() throws {
         let s = fixture(), config = pgySettings()
         let p = try RoutePlanner.make(kind: .applyPgy, settings: config, snapshot: s, session: SessionState())
@@ -158,6 +226,41 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(p.actions.first, .acceptRoutes(from: true, to: false))
         XCTAssertEqual(p.actions.last, .remove(m))
     }
+    func testTailscaleSwitchesOwnedFallbackAndTunnelRoutesInPlace() throws {
+        var snapshot = fixture(), settings = AppSettings()
+        let selected = "192.168.30.0/24", promoted = "192.168.160.0/22"
+        snapshot.tailscale?.subnets.append(TailscaleSubnet(network: CIDR(promoted)!, routers: ["remote-router"], online: true))
+        settings.selectedSubnets = [selected]
+        let initial = try RoutePlanner.make(kind: .applyTailscale, settings: settings, snapshot: snapshot, session: SessionState())
+        let untouched = snapshot.routes
+        let before = initial.after
+        snapshot.routes += before.tailscaleManaged.map(route(for:))
+        snapshot.tailscale?.acceptsRoutes = true
+        settings.selectedSubnets = [selected, promoted]
+        let plan = try RoutePlanner.make(kind: .applyTailscale, settings: settings, snapshot: snapshot, session: before)
+        let old = before.tailscaleManaged.filter { CIDR(promoted)!.contains($0.network) }
+        let new = plan.after.tailscaleManaged.filter { CIDR(promoted)!.contains($0.network) }
+        XCTAssertEqual(old.map(\.network.description), ["192.168.160.0/23", "192.168.162.0/23"])
+        XCTAssertTrue(old.allSatisfy { $0.target.interface == "en0" })
+        XCTAssertTrue(new.allSatisfy { $0.target.interface == "utun3" })
+        XCTAssertEqual(plan.actions, zip(old, new).flatMap { [.remove($0), .add($1)] })
+
+        snapshot.routes = untouched + plan.after.tailscaleManaged.map(route(for:))
+        let repeatPlan = try RoutePlanner.make(kind: .applyTailscale, settings: settings, snapshot: snapshot, session: plan.after)
+        XCTAssertTrue(repeatPlan.actions.isEmpty)
+        settings.selectedSubnets = [selected]
+        let reversed = try RoutePlanner.make(kind: .applyTailscale, settings: settings, snapshot: snapshot, session: plan.after)
+        XCTAssertEqual(reversed.actions, zip(new, old).flatMap { [.remove($0), .add($1)] })
+    }
+
+    func testTailscaleReplacementLeavesForeignRoutesAlone() throws {
+        var snapshot = fixture(), settings = AppSettings(), session = SessionState()
+        let foreign = ManagedRoute(network: CIDR("192.168.30.9")!, target: .gateway(IPv4("10.20.0.7")!, "en0"))
+        session.tailscaleManaged = [ManagedRoute(network: foreign.network, target: .gateway(IPv4("10.20.0.1")!, "en0"))]
+        snapshot.routes.append(route(for: foreign))
+        settings.selectedSubnets = ["192.168.30.0/24"]
+        XCTAssertThrowsError(try RoutePlanner.make(kind: .applyTailscale, settings: settings, snapshot: snapshot, session: session))
+    }
     func testTailscaleRejectsSelectedOfficeSubnet() {
         var cfg = AppSettings(); cfg.selectedSubnets = ["10.20.0.0/24"]
         XCTAssertThrowsError(try RoutePlanner.make(kind: .applyTailscale, settings: cfg, snapshot: fixture(), session: SessionState()))
@@ -215,6 +318,118 @@ final class PlannerTests: XCTestCase {
         var cfg = AppSettings(); cfg.selectedSubnets = ["192.168.30.0/24"]
         let ts = try RoutePlanner.make(kind: .applyTailscale, settings: cfg, snapshot: fixture(), session: SessionState())
         XCTAssertEqual(ts.after.tailscaleSelection, cfg.selectedSubnets)
+    }
+}
+
+final class MaintenanceSettingsTests: XCTestCase {
+    func testMaintenanceOptInIsReloaded() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        XCTAssertFalse(AppSettings.load(from: directory).maintainPgy)
+        var settings = AppSettings()
+        settings.maintainPgy = true
+        settings.maintainTailscale = true
+        try settings.save(to: directory)
+        let reloaded = AppSettings.load(from: directory)
+        XCTAssertTrue(reloaded.maintainPgy)
+        XCTAssertTrue(reloaded.maintainTailscale)
+    }
+
+    func testPeerRequirementsCompileUnderSecurityFramework() {
+        for identifier in ["io.routebar.app", "io.routebar.app.helper"] {
+            let rule = RouteService.requirement(identifier, hash: String(repeating: "0", count: 40))
+            var requirement: SecRequirement?
+            XCTAssertEqual(SecRequirementCreateWithString(rule as CFString, [], &requirement), errSecSuccess)
+            XCTAssertNotNil(requirement)
+        }
+    }
+}
+
+final class ReconnectExecutionTests: XCTestCase {
+    func testPgyMaintenancePinsApprovedHostBeforeRemovingBroadRouteOnNewTunnel() throws {
+        let original = fixture()
+        let approved = pgySettings()
+        var journal = SessionJournal()
+        journal.state = try RoutePlanner.make(kind: .applyPgy, settings: approved, snapshot: original, session: journal.state).after
+        let oldTunnel = original.interfaces[2]
+        let newTunnel = InterfaceAddress(name: "utun29", address: oldTunnel.address, network: oldTunnel.network, pointToPoint: true)
+        var reconnected = original
+        reconnected.interfaces[2] = InterfaceAddress(name: oldTunnel.name, address: IPv4("192.0.2.1")!, network: CIDR("192.0.2.0/24")!, pointToPoint: true)
+        reconnected.interfaces.append(newTunnel)
+        let broad = RouteEntry(network: newTunnel.network, gateway: newTunnel.address.description, interface: newTunnel.name, flags: "UGSc")
+        reconnected.routes[1] = broad
+        var draft = approved
+        draft.pgyNodes = [PgyNode(name: "Unapplied", address: "172.16.0.99")]
+        let request = ChangeRequest(kind: .applyPgy, settings: draft, uid: 501, expectedFingerprint: reconnected.fingerprint, maintenance: true)
+        let host = ManagedRoute(network: CIDR("172.16.0.3")!, target: .interface(newTunnel.name), interfaceIdentity: newTunnel.address)
+        var writes: [SessionJournal] = [], actions: [Mutation] = []
+
+        let result = try RouteExecutor.applyTransaction(request, journal: &journal, collect: { reconnected }, persist: { writes.append($0) }, execute: { mutation, recovering in
+            XCTAssertFalse(recovering)
+            XCTAssertEqual(writes.last?.pending?.attempted, actions.count + 1)
+            actions.append(mutation)
+        }, verify: { state, config in
+            XCTAssertEqual(state.pgyManaged, [host])
+            XCTAssertEqual(config.pgyNodes.map(\.address), ["172.16.0.3"])
+        })
+
+        XCTAssertTrue(result.success)
+        XCTAssertEqual(actions, [.add(host), .removeOriginal(broad)])
+        XCTAssertEqual(journal.state.pgyOriginals, [broad])
+        XCTAssertNil(writes.last?.pending)
+        XCTAssertEqual(writes.last?.state, result.state)
+    }
+
+    func testMaintenanceRetriesWithoutWritingThenJournalsOnlyTheApprovedSelection() throws {
+        let original = fixture()
+        let approved = "192.168.30.0/24", office = "10.20.0.0/24"
+        var selection = AppSettings(); selection.selectedSubnets = [approved]
+        var journal = SessionJournal()
+        journal.state = try RoutePlanner.make(kind: .applyTailscale, settings: selection, snapshot: original, session: journal.state).after
+        let before = journal.state
+        var reconnected = original
+        let previous = original.interfaces[1]
+        reconnected.interfaces[1] = InterfaceAddress(name: "utun29", address: previous.address, network: previous.network, pointToPoint: true)
+        var draft = AppSettings(); draft.selectedSubnets = [office]
+        var request = ChangeRequest(kind: .applyTailscale, settings: draft, uid: 501, expectedFingerprint: original.fingerprint, maintenance: true)
+        var writes: [SessionJournal] = [], mutations: [Mutation] = [], verifications = 0
+
+        func run() throws -> HelperResponse {
+            try RouteExecutor.applyTransaction(request, journal: &journal, collect: { reconnected }, persist: { writes.append($0) }, execute: { mutation, recovering in
+                XCTAssertFalse(recovering)
+                XCTAssertNotNil(writes.last?.pending)
+                mutations.append(mutation)
+            }, verify: { state, settings in
+                verifications += 1
+                XCTAssertEqual(settings.selectedSubnets, [approved])
+                XCTAssertEqual(state.tailscaleSelection, [approved])
+            })
+        }
+
+        XCTAssertEqual(try run().networkChanged, true)
+        let router = try XCTUnwrap(reconnected.tailscale?.subnets.first { $0.id == approved })
+        reconnected.tailscale?.subnets.removeAll { $0.id == approved }
+        request.expectedFingerprint = reconnected.fingerprint
+        XCTAssertEqual(try run().waitingForNetwork, true)
+        XCTAssertEqual(journal.state, before)
+        XCTAssertTrue(writes.isEmpty)
+        XCTAssertTrue(mutations.isEmpty)
+        XCTAssertEqual(verifications, 0)
+
+        reconnected.tailscale?.subnets.append(router)
+        request.expectedFingerprint = reconnected.fingerprint
+        let response = try run()
+        XCTAssertTrue(response.success)
+        XCTAssertEqual(verifications, 1)
+        XCTAssertFalse(mutations.isEmpty)
+        XCTAssertNil(journal.pending)
+        XCTAssertEqual(writes.last?.state, response.state)
+        XCTAssertEqual(journal.state.tailscaleSelection, [approved])
+        XCTAssertTrue(journal.state.tailscaleManaged.contains { $0.target == .interface("utun29") })
+        let officeNetwork = try XCTUnwrap(CIDR(office))
+        let officeRoutes = journal.state.tailscaleManaged.filter { officeNetwork.contains($0.network) }
+        XCTAssertEqual(Set(officeRoutes.map(\.network)), Set(officeNetwork.children))
+        XCTAssertTrue(officeRoutes.allSatisfy { $0.target == .interface("en0") })
     }
 }
 

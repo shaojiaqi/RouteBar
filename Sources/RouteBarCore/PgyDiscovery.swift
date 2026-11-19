@@ -47,28 +47,33 @@ public struct PgyDiscoveryState: Codable {
         return Self(members: members.sorted { $0.address < $1.address }, ownIP: own.count == 1 ? own.first?.address : nil)
     }
 
-    public func merging(_ existing: [PgyNode], virtualIP: String) -> [PgyNode] {
+    public func merging(_ existing: [PgyNode], virtualIP: String, applied: Set<String> = []) -> [PgyNode] {
         let peers = members.filter { $0.address != ownIP && $0.address != virtualIP }
         let ids = Set(peers.map(\.memberID)), addresses = Set(peers.map(\.address))
-        var result = existing.filter { node in
-            guard let id = node.discoveryID else { return node.address != ownIP && node.address != virtualIP }
-            return ids.contains(id) || addresses.contains(node.address)
-        }
+        var result = existing.filter { $0.address != ownIP && $0.address != virtualIP }
         for member in peers {
-            if let index = result.firstIndex(where: { $0.discoveryID == member.memberID || $0.address == member.address }) {
-                if result[index].discoveryID != nil {
-                    if result[index].address != member.address { result[index].selected = false }
-                    result[index].address = member.address
-                    result[index].name = member.name
-                    result[index].discoveryID = member.memberID
-                }
+            if let index = result.firstIndex(where: { $0.address == member.address }) {
+                guard result[index].discoveryID != nil else { continue }
+                result[index].name = member.name
+                result[index].discoveryID = member.memberID
+            } else if let index = result.firstIndex(where: {
+                $0.discoveryID == member.memberID && !addresses.contains($0.address) && !applied.contains($0.address)
+            }) {
+                result[index].address = member.address
+                result[index].name = member.name
+                result[index].selected = applied.contains(member.address)
             } else {
-                var node = PgyNode(name: member.name, address: member.address, selected: false)
+                var node = PgyNode(name: member.name, address: member.address, selected: applied.contains(member.address))
                 node.discoveryID = member.memberID
                 result.append(node)
             }
         }
-        return result
+        // An incomplete response must not discard a draft or an explicit uncheck of an applied IP.
+        return result.filter { node in
+            guard let id = node.discoveryID else { return true }
+            return addresses.contains(node.address) || applied.contains(node.address)
+                || (!ids.contains(id) && (ownIP == nil || node.selected))
+        }
     }
 
     public static func collect(interfaces: [InterfaceAddress]) throws -> Self {

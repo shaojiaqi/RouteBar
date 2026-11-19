@@ -50,11 +50,42 @@ final class PgyDiscoveryTests: XCTestCase {
         XCTAssertEqual(again, nodes)
         XCTAssertTrue(again[0].selected)
     }
+    func testReconnectPreservesDraftAndExplicitlyUncheckedAppliedIP() throws {
+        let discovery = try state(rows), applied: Set<String> = ["172.16.0.26"]
+        var nodes = discovery.merging([], virtualIP: "", applied: applied)
+        XCTAssertTrue(nodes[0].selected)
+        nodes[0].selected = false
+        nodes[1].selected = true
+        let empty = try state("[]").merging(nodes, virtualIP: "172.16.0.167", applied: applied)
+        XCTAssertEqual(empty, nodes)
+        let selfOnly = try state(#"[{"id":1,"ip_address":"172.16.0.167"}]"#)
+        XCTAssertEqual(selfOnly.merging(empty, virtualIP: "172.16.0.167", applied: applied), nodes)
+        XCTAssertEqual(discovery.merging(empty, virtualIP: "172.16.0.167", applied: applied), nodes)
+    }
+    func testRediscoverySeedsMissingRowOnlyForExactAppliedIP() throws {
+        let changed = try state(#"[{"id":2,"name":"NAS","ip_address":"172.16.0.27"},{"id":4,"name":"Other","ip_address":"172.16.0.26"}]"#)
+        let old = try state(rows).merging([], virtualIP: "", applied: ["172.16.0.26"])
+        let merged = changed.merging(old, virtualIP: "172.16.0.167", applied: ["172.16.0.26"])
+        XCTAssertEqual(merged.filter(\.selected).map(\.address), ["172.16.0.26"])
+        XCTAssertEqual(merged.first { $0.address == "172.16.0.26" }?.discoveryID, "4")
+        XCTAssertEqual(merged.first { $0.address == "172.16.0.27" }?.discoveryID, "2")
+    }
+    func testMovedMemberKeepsPreviouslyAppliedIPVisibleUntilSelectionChanges() throws {
+        let discovery = try state(rows), applied: Set<String> = ["172.16.0.26"]
+        let moved = try state(#"[{"id":1,"ip_address":"172.16.0.167"},{"id":2,"ip_address":"172.16.0.27"}]"#)
+        let original = discovery.merging([], virtualIP: "", applied: applied)
+        let merged = moved.merging(original, virtualIP: "172.16.0.167", applied: applied)
+        XCTAssertEqual(merged.map(\.address), ["172.16.0.26", "172.16.0.27"])
+        XCTAssertEqual(merged.filter(\.selected).map(\.address), ["172.16.0.26"])
+        let back = discovery.merging(merged, virtualIP: "172.16.0.167", applied: applied)
+        XCTAssertEqual(back.first { $0.address == "172.16.0.26" }, original.first { $0.address == "172.16.0.26" })
+        XCTAssertFalse(back.contains { $0.address == "172.16.0.27" })
+    }
     func testChangedMemberIPUnselectsAndRemovedMemberDisappears() throws {
         let discovery = try state(rows)
         var nodes = discovery.merging([], virtualIP: "")
         nodes[0].selected = true
-        let changed = try state(#"[{"id":2,"name":"Renamed NAS","ip_address":"172.16.0.27","is_online":true}]"#)
+        let changed = try state(#"[{"id":1,"ip_address":"172.16.0.167"},{"id":2,"name":"Renamed NAS","ip_address":"172.16.0.27","is_online":true}]"#)
         let merged = changed.merging(nodes, virtualIP: "172.16.0.167")
         XCTAssertEqual(merged.count, 1)
         XCTAssertEqual(merged[0].id, nodes[0].id)

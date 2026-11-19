@@ -1,4 +1,5 @@
 import AppKit
+import Darwin
 import SwiftUI
 import RouteBarCore
 
@@ -8,15 +9,49 @@ import RouteBarCore
     private var window: NSWindow?
     private var model: AppModel!
     private var openingPopover = false
+    private var instanceLock: SingleInstanceLock?
+    private var managerRequested = false
+    private let reopenNotification = Notification.Name("io.routebar.app.open-manager")
+    private let reopenUser = String(getuid())
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        AppDiagnostics.write("launch version=0.2.1")
+        let event = NSAppleEventManager.shared().currentAppleEvent
+        let launchedAtLogin = event?.paramDescriptor(forKeyword: AEKeyword(keyAEPropData))?.enumCodeValue == OSType(keyAELaunchedAsLogInItem)
+            || event?.paramDescriptor(forKeyword: AEKeyword(keyAELaunchedAsLogInItem)) != nil
+        let opensManager = !CommandLine.arguments.contains("--menu-only") && !launchedAtLogin
+        let center = DistributedNotificationCenter.default()
+        // Subscribe before taking the lock so a simultaneous launch can hand off its request.
+        center.addObserver(self, selector: #selector(openManager), name: reopenNotification, object: reopenUser, suspensionBehavior: .deliverImmediately)
+        do {
+            guard let lock = try SingleInstanceLock.acquire() else {
+                if opensManager {
+                    center.postNotificationName(reopenNotification, object: reopenUser, userInfo: nil, deliverImmediately: true)
+                }
+                NSApp.terminate(nil)
+                return
+            }
+            instanceLock = lock
+        } catch {
+            AppDiagnostics.write("instance-lock-failed: \(error.localizedDescription)")
+            if opensManager {
+                let alert = NSAlert(error: error)
+                alert.messageText = L("无法启动 RouteBar")
+                NSApp.activate(ignoringOtherApps: true)
+                alert.runModal()
+            }
+            NSApp.terminate(nil)
+            return
+        }
+
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "development"
+        AppDiagnostics.write("launch version=\(version)")
         NSSetUncaughtExceptionHandler { exception in
             AppDiagnostics.write("uncaught-exception name=\(exception.name.rawValue) reason=\(exception.reason ?? "unknown")")
         }
         NSApplication.shared.setActivationPolicy(.accessory)
         installMainMenu()
         model = AppModel()
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWake), name: NSWorkspace.didWakeNotification, object: nil)
         item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.image = NSImage(systemSymbolName: "point.3.connected.trianglepath.dotted", accessibilityDescription: L("RouteBar 路由检查"))
         item.button?.image?.isTemplate = true
@@ -30,12 +65,8 @@ import RouteBarCore
         model.onStatusChanged = { [weak self] in self?.updateStatus() }
         model.onLanguageChanged = { [weak self] in
             self?.installMainMenu()
-            self?.window?.title = L("RouteBar · 节点与子网")
         }
-        let event = NSAppleEventManager.shared().currentAppleEvent
-        let launchedAtLogin = event?.paramDescriptor(forKeyword: AEKeyword(keyAEPropData))?.enumCodeValue == OSType(keyAELaunchedAsLogInItem)
-            || event?.paramDescriptor(forKeyword: AEKeyword(keyAELaunchedAsLogInItem)) != nil
-        if !CommandLine.arguments.contains("--menu-only") && !launchedAtLogin { showManager() }
+        if opensManager || managerRequested { showManager() }
         AppDiagnostics.write("launch-at-login=\(launchedAtLogin)")
     }
     private func installMainMenu() {
@@ -74,7 +105,9 @@ import RouteBarCore
         }
     }
     @objc private func openManager() { showManager() }
+    @objc private func didWake(_ notification: Notification) { model.refresh(allowingMaintenance: true) }
     private func showManager() {
+        guard popover != nil else { managerRequested = true; return }
         popover.performClose(nil)
         // Keep a normal Dock / Cmd-Tab entry while the manager is open. Menu-only
         // mode resumes only after the user explicitly closes the manager window.
@@ -82,8 +115,8 @@ import RouteBarCore
         if window == nil {
             let content = NSHostingController(rootView: MainContent(model: model))
             let w = NSWindow(contentViewController: content)
-            w.title = L("RouteBar · 节点与子网"); w.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-            w.setContentSize(NSSize(width: 980, height: 740)); w.minSize = NSSize(width: 960, height: 740)
+            w.title = "RouteBar"; w.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+            w.setContentSize(NSSize(width: 980, height: 680)); w.contentMinSize = NSSize(width: 800, height: 520)
             w.isReleasedWhenClosed = false
             w.hidesOnDeactivate = false
             w.collectionBehavior.insert(.moveToActiveSpace)
@@ -92,6 +125,7 @@ import RouteBarCore
         }
         window?.deminiaturize(nil)
         window?.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true)
+        model.refresh()
         AppDiagnostics.write("manager-open visible=\(window?.isVisible ?? false) dock=regular")
     }
     private func updateStatus() {
@@ -110,9 +144,27 @@ import RouteBarCore
     func applicationDidResignActive(_ notification: Notification) {
         AppDiagnostics.write("deactivated manager-visible=\(window?.isVisible ?? false) miniaturized=\(window?.isMiniaturized ?? false)")
     }
-    func applicationDidBecomeActive(_ notification: Notification) { AppDiagnostics.write("activated manager-visible=\(window?.isVisible ?? false)") }
-    func applicationWillTerminate(_ notification: Notification) { AppDiagnostics.write("normal-termination") }
+    func applicationDidBecomeActive(_ notification: Notification) {
+        model?.refresh()
+        AppDiagnostics.write("activated manager-visible=\(window?.isVisible ?? false)")
+    }
+    func applicationWillTerminate(_ notification: Notification) {
+        NSWorkspace.shared.notificationCenter.removeObserver(self)
+        if instanceLock != nil { AppDiagnostics.write("normal-termination") }
+    }
     func popoverDidClose(_ notification: Notification) { AppDiagnostics.write("popover-close process-kept-running") }
+}
+
+if CommandLine.arguments.count == 2 {
+    switch CommandLine.arguments[1] {
+    case "--check-route-service-build":
+        print(RouteService.canAuthorize ? "Route service payload verified" : "Route service payload unavailable")
+        exit(RouteService.canAuthorize ? 0 : 1)
+    case "--probe-route-service":
+        do { try RouteService.probe(); print("Authorized route service responded"); exit(0) }
+        catch { fputs("\(error.localizedDescription)\n", stderr); exit(1) }
+    default: break
+    }
 }
 
 MainActor.assumeIsolated {

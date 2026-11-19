@@ -41,7 +41,10 @@ public enum RouteBarLocalization {
     /// Used by the separate privileged helper; never writes root's preferences.
     public static func useInCurrentProcess(_ language: AppLanguage?) { lock.lock(); override = language; lock.unlock() }
     public static let catalog: [String: [String: String]] = {
-        guard let url = Bundle.module.url(forResource: "Localizations", withExtension: "json"),
+        let sidecar = Bundle.main.executableURL?.deletingLastPathComponent().appendingPathComponent("Localizations.json")
+        let url = sidecar.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
+            ?? Bundle.module.url(forResource: "Localizations", withExtension: "json")
+        guard let url,
               let data = try? Data(contentsOf: url),
               let translations = try? JSONDecoder().decode([String: [String: String]].self, from: data) else { return [:] }
         return translations

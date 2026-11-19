@@ -26,6 +26,22 @@ public struct SessionState: Codable, Equatable {
     public init() {}
     public var hasPgy: Bool { !pgyManaged.isEmpty || !pgyOriginals.isEmpty }
     public var hasTailscale: Bool { tailscaleOriginalAccepts != nil || !tailscaleManaged.isEmpty }
+
+    public func maintenanceSettings(for kind: RequestKind) -> AppSettings? {
+        var settings = AppSettings()
+        switch kind {
+        case .applyPgy:
+            guard hasPgy, let pgyVirtualIP, !pgySelection.isEmpty else { return nil }
+            settings.pgyVirtualIP = pgyVirtualIP
+            settings.pgyNodes = pgySelection.map { PgyNode(name: $0, address: $0) }
+        case .applyTailscale:
+            guard hasTailscale else { return nil }
+            settings.selectedSubnets = tailscaleSelection
+        default:
+            return nil
+        }
+        return settings
+    }
 }
 
 public enum Mutation: Codable, Equatable {
@@ -72,9 +88,16 @@ public struct ChangeRequest: Codable {
     public var uid: UInt32
     public var expectedFingerprint: String
     public var language: AppLanguage? = nil
-    public init(kind: RequestKind, settings: AppSettings, uid: UInt32, expectedFingerprint: String, language: AppLanguage? = nil) {
+    public var maintenance: Bool? = nil
+    public init(kind: RequestKind, settings: AppSettings, uid: UInt32, expectedFingerprint: String, language: AppLanguage? = nil, maintenance: Bool? = nil) {
         self.kind = kind; self.settings = settings; self.uid = uid; self.expectedFingerprint = expectedFingerprint; self.language = language
+        self.maintenance = maintenance
     }
+}
+
+public struct RouteNotReady: LocalizedError {
+    let message: String
+    public var errorDescription: String? { message }
 }
 
 public enum RoutePlanner {
@@ -82,7 +105,7 @@ public enum RoutePlanner {
         var actions: [Mutation] = [], after = session, warnings: [String] = []
         switch kind {
         case .applyPgy:
-            guard let tunnel = s.pgyInterface(virtualIP: settings.pgyVirtualIP) else { throw RouteBarError(L("蒲公英未连接，或虚拟 IP 未匹配。工具不会替你启动它。")) }
+            guard let tunnel = s.pgyInterface(virtualIP: settings.pgyVirtualIP) else { throw RouteNotReady(message: L("蒲公英未连接，或虚拟 IP 未匹配。工具不会替你启动它。")) }
             let ips = try settings.pgyNodes.filter(\.selected).map { node -> IPv4 in
                 guard let ip = IPv4(node.address), ip.isUnicast else { throw RouteBarError(L("节点 IP 无效：{0}", node.address)) }
                 guard ip != tunnel.address else { throw RouteBarError(L("节点列表不能包含本机蒲公英 IP")) }
@@ -121,15 +144,17 @@ public enum RoutePlanner {
             after.pgyManaged = []; after.pgyOriginals = []; after.pgyVirtualIP = nil; after.pgySelection = []
         case .applyTailscale:
             guard let ts = s.tailscale, ts.backend == "Running", let ti = s.tailscaleInterface,
-                  let accepts = ts.acceptsRoutes else { throw RouteBarError(L("Tailscale 未就绪，或无法读取接收子网设置。")) }
+                  let accepts = ts.acceptsRoutes else { throw RouteNotReady(message: L("Tailscale 未就绪，或无法读取接收子网设置。")) }
             let available = Set(ts.subnets.map(\.id)), selected = settings.selectedSubnets
-            guard selected.isSubset(of: available) else { throw RouteBarError(L("部分选择的子网已撤销，请刷新并重新选择。")) }
+            guard selected.isSubset(of: available) else { throw RouteNotReady(message: L("部分已选子网当前不可用。")) }
             if !selected.isEmpty && ts.hasIPv6Subnets { throw RouteBarError(L("发现 IPv6 子网；本版只支持 IPv4，不能安全开启混合子网选择。")) }
             for subnet in ts.subnets where selected.contains(subnet.id) {
-                guard subnet.online else { throw RouteBarError(L("子网路由器离线：{0}", subnet.id)) }
                 guard !s.physicalNetworks.contains(where: { $0.network.overlaps(subnet.network) }) else {
                     throw RouteBarError(L("{0} 与当前直连内网重叠，已阻止通过 Tailscale 接管。", subnet.id))
                 }
+            }
+            if let offline = ts.subnets.first(where: { selected.contains($0.id) && !$0.online }) {
+                throw RouteNotReady(message: L("子网路由器离线：{0}", offline.id))
             }
             let effective = ts.subnets.sorted { $0.network < $1.network }
             for (i, a) in effective.enumerated() {
@@ -139,8 +164,9 @@ public enum RoutePlanner {
             }
             var desired: [ManagedRoute] = []
             if !selected.isEmpty {
-                guard let fallback = s.physicalDefault else { throw RouteBarError(L("未找到本地物理默认网关，无法保护未选子网。")) }
-                let baseRoutes = s.routes.filter { r in !session.tailscaleManaged.contains(where: { $0.matches(r) }) }
+                guard let fallback = s.physicalDefault else { throw RouteNotReady(message: L("未找到本地物理默认网关，无法保护未选子网。")) }
+                let currentManaged = session.tailscaleManaged.filter { $0.identityMatches(s.interfaces) }
+                let baseRoutes = s.routes.filter { r in !currentManaged.contains(where: { $0.matches(r) }) }
                 var covered: [CIDR] = []
                 for subnet in effective {
                     if covered.contains(where: { $0.contains(subnet.network) }) { continue }
@@ -162,7 +188,7 @@ public enum RoutePlanner {
                     return r
                 }
             }
-            let diff = try routeDiff(desired: desired, previous: session.tailscaleManaged, snapshot: s)
+            let diff = try routeDiff(desired: desired, previous: session.tailscaleManaged, snapshot: s, replaceOwned: true)
             let nextAccepts = !selected.isEmpty
             // Protect excluded LANs before enabling native subnet routes; disable native routes before removing protection.
             if nextAccepts {
@@ -199,9 +225,12 @@ public enum RoutePlanner {
         }
     }
 
-    private static func routeDiff(desired: [ManagedRoute], previous: [ManagedRoute], snapshot: NetworkSnapshot) throws -> (add: [Mutation], remove: [Mutation], owned: [ManagedRoute]) {
+    private static func routeDiff(desired: [ManagedRoute], previous: [ManagedRoute], snapshot: NetworkSnapshot,
+                                  replaceOwned: Bool = false) throws -> (add: [Mutation], remove: [Mutation], owned: [ManagedRoute]) {
         let desired = Array(Set(desired)).sorted { $0.network < $1.network }
-        var additions: [Mutation] = [], owned: [ManagedRoute] = []
+        let currentManaged = previous.filter { $0.identityMatches(snapshot.interfaces) }
+        var additions: [Mutation] = [], replacements: [Mutation] = [], owned: [ManagedRoute] = []
+        var replaced = Set<ManagedRoute>()
         for route in desired {
             try route.target.validate()
             let exact = snapshot.routes.filter { $0.network == route.network && !$0.isScoped && !$0.isCloned }
@@ -209,11 +238,21 @@ public enum RoutePlanner {
                 if previous.contains(route) { owned.append(route) }
                 continue // Existing routes never become ours just because they match.
             }
-            guard exact.isEmpty else { throw RouteBarError(L("已有路由占用 {0}，拒绝覆盖：{1}", route.network, exact[0])) }
-            additions.append(.add(route)); owned.append(route)
+            if let occupied = exact.first {
+                guard replaceOwned, exact.count == 1,
+                      let old = currentManaged.first(where: { $0.matches(occupied) && !desired.contains($0) }) else {
+                    throw RouteBarError(L("已有路由占用 {0}，拒绝覆盖：{1}", route.network, occupied))
+                }
+                // Keep the delete and add adjacent so a failed add restores the old path on rollback.
+                replacements += [.remove(old), .add(route)]
+                replaced.insert(old)
+            } else {
+                additions.append(.add(route))
+            }
+            owned.append(route)
         }
-        let removals = previous.filter { !desired.contains($0) && $0.identityMatches(snapshot.interfaces) && snapshot.routes.contains(where: $0.matches) }.map(Mutation.remove)
-        return (additions, removals, owned)
+        let removals = currentManaged.filter { !desired.contains($0) && !replaced.contains($0) && snapshot.routes.contains(where: $0.matches) }.map(Mutation.remove)
+        return (additions + replacements, removals, owned)
     }
 
     private static func overlay(_ net: CIDR, selected: Bool, tunnel: String, fallback: RouteTarget,

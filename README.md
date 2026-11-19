@@ -18,36 +18,38 @@ The app uses an ad-hoc signature and is **not Apple-notarized**. macOS may block
 
 ## Screenshots / 界面预览
 
-**Pgy nodes / 蒲公英节点** — Select individual IPs to route through Pgy. 按节点选择需要走蒲公英的 IP，本机虚拟 IP 自动识别。
+The English screenshots below use sample nodes and network addresses. 以下英文界面截图使用示例节点和网段。
 
-![RouteBar Pgy node selection with online status and read-only local virtual IP](docs/screenshots/pgy-nodes.png)
+**Pgy nodes / 蒲公英节点** — See whether each node is online, offline, or unknown, separately from its current route. 节点在线状态与当前路径分开显示。
 
-**Tailscale subnets / Tailscale 子网** — Choose remote subnets while keeping directly connected LANs first. 选择远端子网，与直连内网冲突的网段会显示「Local Network First」。
+![RouteBar Pgy nodes with online, offline, and unknown badges next to node names](docs/screenshots/pgy-nodes.png)
 
-![RouteBar Tailscale subnet selection with local network conflict protection](docs/screenshots/tailscale-subnets.png)
+**Tailscale subnets / Tailscale 子网** — Compare the current path with your draft and see conflicts next to each subnet. 对比当前路径和待应用选择，直连网段冲突在对应条目下说明。
+
+![RouteBar Tailscale subnets with distinct Current Path and Draft columns and an en0 overlap warning](docs/screenshots/tailscale-subnets.png)
 
 ## Features / 功能
 
 - **Pgy node selection:** discovers local virtual IP, member names, IPs, and online status. Only checked IPs receive node routes; manual node entry and import are available.
 - **Tailscale subnet selection:** discovers approved IPv4 subnets and router status, and prevents selecting subnets that overlap the directly connected LAN.
-- **Preview before applying:** checking a box only saves a draft. **Apply** opens a preview; **Confirm and Apply** requests administrator authorization and executes it.
+- **Preview before applying:** each VPN page separates **Current Path** (the observed route) from **Draft** (your selection). **Review Changes** opens a preview; **Confirm and Apply** applies it with background access or one-time administrator approval.
 - **Restore and recovery:** records owned routes, supports restoring original settings, and rolls back failed or interrupted operations.
 - **Dynamic interfaces:** identifies tunnels by address rather than a fixed `utun` number.
 - **Launch at login:** optional system login item; login launch shows only the menu bar icon. Manual launch opens the manager.
 - **Three languages:** English, 繁體中文, 简体中文; immediate switching and system-language selection.
 - **Unavailable state:** when Pgy is absent or stopped, controls show an unavailable state while saved nodes and selections are retained.
 
-蒲公英本机虚拟 IP 为自动识别的只读信息，可以复制。节点与子网勾选仅保存草稿，不会立即修改网络。点击「应用」查看预览，再点击「确认并应用」并授权后执行。
+蒲公英本机虚拟 IP 为自动识别的只读信息，可以复制。VPN 页面分开显示「当前路径」与「待应用」；勾选后点「预览更改」，再点「确认并应用」。
 
 ## Usage / 使用
 
 1. Connect the official VPN clients yourself. RouteBar does not start, sign in to, or connect VPN clients.
-2. Select Pgy nodes or Tailscale subnets, click **Apply**, and review every planned change.
-3. Confirm and authorize only when ready. A privileged helper runs per operation; no persistent root service is installed and administrator passwords are not stored.
-4. Optionally enable maintenance of an applied selection. Checks run every 10 seconds; editing drafts pauses corresponding maintenance. Maintenance resets to off each time RouteBar launches.
-5. Use the corresponding **Restore** button before uninstalling. Quitting RouteBar does **not** undo applied routes or Tailscale preferences.
+2. Use **Refresh** at the top of the manager to read connections, current routes, and draft checks. This action does not change system routes.
+3. Open a VPN page, select nodes or subnets, and choose **Review Changes**. Confirm only after reviewing the plan.
+4. Use **Settings** for language, launch at login, background authorization, and automatic maintenance. Maintenance is optional and uses the last applied selection. The periodic check runs every 10 seconds.
+5. Use **More Actions → Restore** on the VPN page before uninstalling. For an interrupted operation, open **Diagnostics** to review the rollback. Quitting RouteBar does **not** undo applied routes or Tailscale preferences.
 
-关闭管理窗口后工具继续在菜单栏运行；右键菜单栏图标、再次打开 App 或按 **Cmd-1** 可打开管理窗口。「登录时启动」位于管理窗口右上角及菜单栏浮窗，默认关闭；系统要求批准时会提供设置入口。移动 App 后可能需要重新启用登录项。
+关闭管理窗口后工具继续在菜单栏运行；右键菜单栏图标、再次打开 App 或按 **Cmd-1** 可打开管理窗口。语言、登录启动、后台授权和自动维护都在侧边栏的「设置」里。移动 App 后可能需要重新启用登录项。
 
 ## Routing behavior and limits / 路由行为与限制
 
@@ -77,10 +79,15 @@ References: [Tailscale CLI](https://tailscale.com/docs/reference/tailscale-cli) 
 
 The helper re-reads the network state and rebuilds the plan after authorization. If it differs from the preview, no changes are made. Each mutation is journaled first, then verified; failures roll back in reverse order. Interface identity includes its address to avoid modifying another tunnel after interface-number reuse. External route conflicts are not overwritten.
 
+In **Settings → Background Route Access**, select **Enable Background Access** and approve the macOS administrator prompt. RouteBar installs a root-owned, on-demand helper that accepts requests only from the approved app build and console user. Confirmed changes and reconnect maintenance can then use the service without repeated password prompts. After an update, select **Authorize Again** if the app requests it. Revoke access in RouteBar to remove the helper without changing your routes. Manual authorization remains available.
+
+在打包好的应用中点击「启用后台授权」，并在 macOS 管理员弹窗中批准一次。此后应用和维护无需反复输密码。授权绑定到当前应用构建和批准时的本机用户，应用更新后需要重新授权。「撤销授权」会移除后台助手，保留现有路由；仍可单次手动授权。维护开关会保留，RouteBar 运行时只恢复上次确认应用的选择。
+
 - `~/Library/Application Support/RouteBar/settings.json`: saved node/subnet drafts.
 - `~/Library/Application Support/RouteBar/activity.json`: recent operation history.
 - `~/Library/Application Support/RouteBar/lifecycle.log`: local lifecycle diagnostics.
 - `/var/db/io.routebar/session-<uid>.json`: root-owned recovery journal containing managed routes and prior route-acceptance settings, without passwords or keys.
+- `/var/db/io.routebar/service/` and `/Library/LaunchDaemons/io.routebar.app.route-service.plist`: helper files and launch configuration installed only after background access is approved.
 
 Restore settings before deleting the app or its recovery journal. Routes are system-wide; this version is intended for one logged-in user. Inspection output and local journals contain network details: review them before sharing.
 
@@ -96,6 +103,8 @@ bash scripts/build-dmg.sh
 
 Output: `dist/RouteBar.app`, `dist/routebarctl`, and a versioned DMG with SHA-256 checksum. Build architecture follows the host; the published DMG is arm64.
 
+The default build supports local background authorization without a Developer ID certificate. Run `bash scripts/check-route-service.sh` to check the packaged assistant and its refusal to run without administrator authority. After approving background access, run `bash scripts/check-route-service.sh --approved` to verify the service responds without modifying routes.
+
 The CLI is read-only:
 
 ```sh
@@ -107,9 +116,9 @@ dist/routebarctl plan applyTailscale --select 10.50.0.0/24
 
 ## Validation / 验证
 
-Version 0.2.1 (build 8): 52 automated tests cover parsing, tunnel identity, route planning, ownership, conflicts, rollback/recovery, installation detection, and localization. Release builds, bundle signatures, DMG integrity, and the mounted app have been checked. Tests use synthetic network data and do not modify live routes.
+Version 0.3.0 (build 9): 67 automated tests cover discovery, route coverage, planning, ownership, conflicts, reconnect maintenance, rollback, and localization. The release app signature, mounted DMG, and unprivileged helper checks were verified. Tests use synthetic network data and do not modify live routes.
 
-UI checks covered the three languages, Apply preview/cancel, the read-only virtual IP, and login-item control visibility. Version 0.2.1 was also verified by applying a single Tailscale subnet on macOS: the selected subnet resolved through Tailscale, excluded subnets through the physical gateway, and the directly connected LAN retained its physical interface. This verifies local routing, not reachability of every remote device. Actual launch at the next macOS login has not been verified. Automated tests do not establish compatibility with every VPN/proxy version or network topology.
+UI checks used fixtures to review all three languages, the route preview, light and dark appearance, and compact window layouts. Automated tests do not establish compatibility with every VPN/proxy version or network topology.
 
 ## License
 
