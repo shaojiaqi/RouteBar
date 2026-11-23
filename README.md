@@ -116,9 +116,11 @@ dist/routebarctl plan applyTailscale --select 10.50.0.0/24
 
 ## Validation / 验证
 
-Version 0.3.0 (build 9): 67 automated tests cover discovery, route coverage, planning, ownership, conflicts, reconnect maintenance, rollback, and localization. The release app signature, mounted DMG, and unprivileged helper checks were verified. Tests use synthetic network data and do not modify live routes.
+Version 0.3.1 (build 10): 67 automated tests cover discovery, route coverage, planning, ownership, conflicts, reconnect maintenance, rollback, and localization. The release app signature, mounted DMG, and unprivileged helper checks were verified. Tests use synthetic network data and do not modify live routes.
 
 UI checks used fixtures to review all three languages, the route preview, light and dark appearance, and compact window layouts. Automated tests do not establish compatibility with every VPN/proxy version or network topology.
+
+The 0.3.1 window fix was checked across all five manager pages with long sample lists and a simulated smaller display. Switching pages or closing and reopening the manager preserves the resized window. 页面切换或关闭后重新打开管理窗口时，会保留手动调整后的尺寸。
 
 ## License
 

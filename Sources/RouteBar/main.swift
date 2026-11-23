@@ -114,9 +114,27 @@ import RouteBarCore
         NSApp.setActivationPolicy(.regular)
         if window == nil {
             let content = NSHostingController(rootView: MainContent(model: model))
-            let w = NSWindow(contentViewController: content)
-            w.title = "RouteBar"; w.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-            w.setContentSize(NSSize(width: 980, height: 680)); w.contentMinSize = NSSize(width: 800, height: 520)
+            // The scrollable pages lay out inside the window, without setting its size constraints.
+            content.sizingOptions = []
+            let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .resizable]
+            let screen = NSScreen.main
+            var size = NSSize(width: 980, height: 680)
+            if let visibleFrame = screen?.visibleFrame {
+                let available = NSWindow.contentRect(forFrameRect: visibleFrame.insetBy(dx: 24, dy: 24), styleMask: style)
+                size.width = min(size.width, available.width)
+                size.height = min(size.height, available.height)
+            }
+            let bounds = NSRect(origin: .zero, size: size)
+            let container = NSViewController()
+            container.view = NSView(frame: bounds)
+            container.addChild(content)
+            content.view.frame = bounds
+            content.view.autoresizingMask = [.width, .height]
+            container.view.addSubview(content.view)
+            let w = NSWindow(contentRect: bounds, styleMask: style, backing: .buffered, defer: false, screen: screen)
+            w.contentViewController = container
+            w.title = "RouteBar"
+            w.contentMinSize = NSSize(width: min(800, size.width), height: min(520, size.height))
             w.isReleasedWhenClosed = false
             w.hidesOnDeactivate = false
             w.collectionBehavior.insert(.moveToActiveSpace)
